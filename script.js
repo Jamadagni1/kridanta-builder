@@ -52,14 +52,38 @@ function generateKridanta() {
         prat = "ल्यप्";
     }
 
+    // 1. Pehle check karein ki kya is dhatu ka koi fix rule hai?
     let dhatuData = sanskritDatabase.dhatus[dhatu];
     if (dhatuData && dhatuData.rules && dhatuData.rules[prat]) {
         let ruleObj = dhatuData.rules[prat];
         baseForm = ruleObj.form;
         ruleObj.steps.forEach(step => steps.push(step));
-    } else {
-        baseForm = dhatu + "-" + prat;
-        steps.push(`सामान्य संयोजन (General join).`);
+    } 
+    else {
+        // 2. Agar fix rule nahi hai, to General Rules check karein
+        let ruleApplied = false;
+
+        if (sanskritDatabase.generalRules) {
+            for (let rule of sanskritDatabase.generalRules) {
+                // Check karein ki kya dhatu rule ke "endsWith" character(s) se end hoti hai aur pratyay match hota hai
+                if (dhatu.endsWith(rule.endsWith) && prat === rule.pratyaya) {
+                    
+                    // Logic: Dhatu ke aakhiri character(s) ko hata kar "replaceWith" string jod do
+                    baseForm = dhatu.slice(0, -rule.endsWith.length) + rule.replaceWith;
+                    
+                    // JSON se steps utha kar array mein daal do
+                    rule.steps.forEach(step => steps.push(step));
+                    ruleApplied = true;
+                    break; // Ek baar rule mil gaya to aage check karne ki zarurat nahi
+                }
+            }
+        }
+
+        // 3. Agar koi bhi rule match na kare, to default dash (-) laga kar jod do
+        if (!ruleApplied) {
+            baseForm = dhatu + "-" + prat;
+            steps.push(`सामान्य संयोजन (General join).`);
+        }
     }
 
     if (upa !== "") {
