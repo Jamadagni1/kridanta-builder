@@ -1,6 +1,6 @@
 let sanskritDatabase = {};
 
-// 1. JSON फाइल को लोड करना
+// 1. Fetch JSON Data
 async function loadDatabase() {
     try {
         const response = await fetch('database.json');
@@ -18,7 +18,7 @@ async function loadDatabase() {
     }
 }
 
-// 2. UI इनिशियलाइज़ करना
+// 2. Initialize UI Components
 function initializeUI() {
     let upaSelect = document.getElementById("upasarga");
     sanskritDatabase.upasargas.forEach(u => upaSelect.options.add(new Option(u.label, u.id)));
@@ -38,10 +38,10 @@ function initializeUI() {
     });
 }
 
-// पेज लोड होते ही डेटाबेस फेच करें
+// Load database on window load
 window.onload = loadDatabase;
 
-// 3. शब्द निर्माण लॉजिक (Rule Engine Application)
+// 3. Logic Engine to Generate Kridanta
 function generateKridanta() {
     let upa = document.getElementById("upasarga").value;
     let dhatu = document.getElementById("dhatu").value;
@@ -127,7 +127,7 @@ function generateKridanta() {
     setTimeout(() => { document.getElementById("resultSection").scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
 }
 
-// 4. UI इंटरेक्शन्स
+// 4. UI Interactions
 function togglePrakriya() { document.getElementById("prakriyaBox").classList.toggle("show"); }
 
 function toggleMobileMenu() {
@@ -155,12 +155,14 @@ function toggleAccordion(event, element) {
     element.parentElement.classList.toggle("active");
 }
 
+// Close Dropdowns on Click Outside
 window.onclick = function(event) {
     if (!event.target.closest('.nav-dropdown')) {
         document.querySelectorAll(".dropdown-content.show").forEach(el => el.classList.remove('show'));
     }
 }
 
+// Toggle Dark Mode
 function toggleDark() {
     document.body.classList.toggle("dark");
     let icon = document.getElementById("theme-icon");
