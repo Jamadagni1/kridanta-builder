@@ -1,18 +1,24 @@
 let sanskritDatabase = {};
 
-// 1. JSON फाइल को लोड करना
+// 1. Fetch JSON Data
 async function loadDatabase() {
     try {
         const response = await fetch('database.json');
+        
+        // Check if fetch was successful
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         sanskritDatabase = await response.json();
         initializeUI();
     } catch (error) {
         console.error("डेटाबेस लोड करने में त्रुटि:", error);
-        alert("डेटा लोड नहीं हो सका। कृपया सुनिश्चित करें कि आप Live Server का उपयोग कर रहे हैं।");
+        alert("डेटा लोड नहीं हो सका। कृपया सुनिश्चित करें कि आप Live Server का उपयोग कर रहे हैं। (Error: " + error.message + ")");
     }
 }
 
-// 2. UI इनिशियलाइज़ करना
+// 2. Initialize UI Components
 function initializeUI() {
     let upaSelect = document.getElementById("upasarga");
     sanskritDatabase.upasargas.forEach(u => upaSelect.options.add(new Option(u.label, u.id)));
@@ -32,10 +38,10 @@ function initializeUI() {
     });
 }
 
-// पेज लोड होते ही डेटाबेस फेच करें
+// Load database on window load
 window.onload = loadDatabase;
 
-// 3. शब्द निर्माण लॉजिक
+// 3. Logic Engine to Generate Kridanta
 function generateKridanta() {
     let upa = document.getElementById("upasarga").value;
     let dhatu = document.getElementById("dhatu").value;
@@ -52,40 +58,34 @@ function generateKridanta() {
         prat = "ल्यप्";
     }
 
-    // 1. Pehle check karein ki kya is dhatu ka koi fix rule hai?
+    // Checking Specific Dhatu Rules
     let dhatuData = sanskritDatabase.dhatus[dhatu];
     if (dhatuData && dhatuData.rules && dhatuData.rules[prat]) {
         let ruleObj = dhatuData.rules[prat];
         baseForm = ruleObj.form;
         ruleObj.steps.forEach(step => steps.push(step));
-    } 
-    else {
-        // 2. Agar fix rule nahi hai, to General Rules check karein
+    } else {
+        // Checking General Rules
         let ruleApplied = false;
 
         if (sanskritDatabase.generalRules) {
             for (let rule of sanskritDatabase.generalRules) {
-                // Check karein ki kya dhatu rule ke "endsWith" character(s) se end hoti hai aur pratyay match hota hai
                 if (dhatu.endsWith(rule.endsWith) && prat === rule.pratyaya) {
-                    
-                    // Logic: Dhatu ke aakhiri character(s) ko hata kar "replaceWith" string jod do
                     baseForm = dhatu.slice(0, -rule.endsWith.length) + rule.replaceWith;
-                    
-                    // JSON se steps utha kar array mein daal do
                     rule.steps.forEach(step => steps.push(step));
                     ruleApplied = true;
-                    break; // Ek baar rule mil gaya to aage check karne ki zarurat nahi
+                    break;
                 }
             }
         }
 
-        // 3. Agar koi bhi rule match na kare, to default dash (-) laga kar jod do
         if (!ruleApplied) {
             baseForm = dhatu + "-" + prat;
             steps.push(`सामान्य संयोजन (General join).`);
         }
     }
 
+    // Applying Upasarga Sandhi Logic
     if (upa !== "") {
         let uBase = upa === "आङ्" ? "आ" : upa;
         steps.push(`अब '${uBase}' उपसर्ग को '${baseForm}' के साथ जोड़ेंगे।`);
@@ -118,7 +118,7 @@ function generateKridanta() {
     setTimeout(() => { document.getElementById("resultSection").scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
 }
 
-// 4. UI इंटरेक्शन्स
+// 4. UI Interactions
 function togglePrakriya() { document.getElementById("prakriyaBox").classList.toggle("show"); }
 
 function toggleMobileMenu() {
@@ -146,12 +146,14 @@ function toggleAccordion(event, element) {
     element.parentElement.classList.toggle("active");
 }
 
+// Close Dropdowns on Click Outside
 window.onclick = function(event) {
     if (!event.target.closest('.nav-dropdown')) {
         document.querySelectorAll(".dropdown-content.show").forEach(el => el.classList.remove('show'));
     }
 }
 
+// Toggle Dark Mode
 function toggleDark() {
     document.body.classList.toggle("dark");
     let icon = document.getElementById("theme-icon");
