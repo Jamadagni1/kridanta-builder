@@ -1,11 +1,11 @@
 let sanskritDatabase = {};
 
-// 1. Fetch JSON Data
+// 1. JSON फाइल को लोड करना
 async function loadDatabase() {
     try {
         const response = await fetch('database.json');
         
-        // Check if fetch was successful
+        // Handle fetch errors gracefully
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -18,7 +18,7 @@ async function loadDatabase() {
     }
 }
 
-// 2. Initialize UI Components
+// 2. UI इनिशियलाइज़ करना
 function initializeUI() {
     let upaSelect = document.getElementById("upasarga");
     sanskritDatabase.upasargas.forEach(u => upaSelect.options.add(new Option(u.label, u.id)));
@@ -38,10 +38,10 @@ function initializeUI() {
     });
 }
 
-// Load database on window load
+// पेज लोड होते ही डेटाबेस फेच करें
 window.onload = loadDatabase;
 
-// 3. Logic Engine to Generate Kridanta
+// 3. शब्द निर्माण लॉजिक (Rule Engine Application)
 function generateKridanta() {
     let upa = document.getElementById("upasarga").value;
     let dhatu = document.getElementById("dhatu").value;
@@ -53,32 +53,40 @@ function generateKridanta() {
 
     steps.push(`<b>शुरुआत:</b> ${upa ? upa + ' + ' : ''}${dhatu} + ${prat}`);
 
+    // Pre-processing for 'Lyp' based on Upasarga
     if (prat === "क्त्वा" && upa !== "") {
         steps.push(`<b>जादू (नियम):</b> उपसर्ग होने के कारण 'क्त्वा' बदल कर 'ल्यप्' बन गया!`);
         prat = "ल्यप्";
     }
 
-    // Checking Specific Dhatu Rules
+    // Step A: Check if Dhatu has Explicit Rules Hardcoded
     let dhatuData = sanskritDatabase.dhatus[dhatu];
+    
     if (dhatuData && dhatuData.rules && dhatuData.rules[prat]) {
         let ruleObj = dhatuData.rules[prat];
         baseForm = ruleObj.form;
         ruleObj.steps.forEach(step => steps.push(step));
-    } else {
-        // Checking General Rules
+    } 
+    else {
+        // Step B: Apply General Rules (Pattern Matching)
         let ruleApplied = false;
 
         if (sanskritDatabase.generalRules) {
             for (let rule of sanskritDatabase.generalRules) {
+                // If the Dhatu ends with the specified character(s) AND the Pratyay matches
                 if (dhatu.endsWith(rule.endsWith) && prat === rule.pratyaya) {
+                    
+                    // Logic: Chop off the ending characters and append the 'replaceWith' string
                     baseForm = dhatu.slice(0, -rule.endsWith.length) + rule.replaceWith;
+                    
                     rule.steps.forEach(step => steps.push(step));
                     ruleApplied = true;
-                    break;
+                    break; // Stop looking once a rule matches
                 }
             }
         }
 
+        // Step C: Fallback to General Join if no rules matched
         if (!ruleApplied) {
             baseForm = dhatu + "-" + prat;
             steps.push(`सामान्य संयोजन (General join).`);
@@ -108,6 +116,7 @@ function generateKridanta() {
 
     steps.push(`<b>अंतिम शब्द:</b> <span style="color:#ec4899; font-size:1.2em;">${finalForm}</span>`);
 
+    // Updating the DOM
     document.getElementById("finalOutput").innerText = finalForm;
     let stepsHtml = steps.map((s, index) => `<li class="step-item"><div style="background:#3b82f6; color:white; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:bold; font-size:14px;">${index+1}</div> <div>${s}</div></li>`).join("");
     document.getElementById("prakriyaSteps").innerHTML = stepsHtml;
@@ -118,7 +127,7 @@ function generateKridanta() {
     setTimeout(() => { document.getElementById("resultSection").scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
 }
 
-// 4. UI Interactions
+// 4. UI इंटरेक्शन्स
 function togglePrakriya() { document.getElementById("prakriyaBox").classList.toggle("show"); }
 
 function toggleMobileMenu() {
@@ -146,14 +155,12 @@ function toggleAccordion(event, element) {
     element.parentElement.classList.toggle("active");
 }
 
-// Close Dropdowns on Click Outside
 window.onclick = function(event) {
     if (!event.target.closest('.nav-dropdown')) {
         document.querySelectorAll(".dropdown-content.show").forEach(el => el.classList.remove('show'));
     }
 }
 
-// Toggle Dark Mode
 function toggleDark() {
     document.body.classList.toggle("dark");
     let icon = document.getElementById("theme-icon");
