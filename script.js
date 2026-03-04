@@ -1,44 +1,29 @@
 let sanskritDatabase = {};
 
-// वर्ण संयोजन सहायक फंक्शन (Halant + Vowel Joiner)
 function joinSanskrit(text) {
-    const vowelMap = {
-        '्अ': '', '्आ': 'ा', '्इ': 'ि', '्ई': 'ी', '्उ': 'ु',
-        '्ऊ': 'ू', '्ऋ': 'ृ', '्ए': 'े', '्ऐ': 'ै', '्ओ': 'ो', '्औ': 'ौ'
-    };
-    for (let [key, val] of Object.entries(vowelMap)) {
-        text = text.split(key).join(val);
-    }
+    const vowelMap = { '्अ': '', '्आ': 'ा', '्इ': 'ि', '्ई': 'ी', '्उ': 'ु', '्ऊ': 'ू', '्ऋ': 'ृ', '्ए': 'े', '्ऐ': 'ै', '्ओ': 'ो', '्औ': 'ौ' };
+    for (let [key, val] of Object.entries(vowelMap)) { text = text.split(key).join(val); }
     return text;
 }
 
-// 1. Fetch JSON Data
 async function loadDatabase() {
     try {
         const response = await fetch('database.json');
         if (!response.ok) throw new Error(`HTTP error!`);
         sanskritDatabase = await response.json();
         initializeUI();
-    } catch (error) {
-        console.error("डेटाबेस लोड करने में त्रुटि:", error);
-        alert("डेटा लोड नहीं हो सका। कृपया Live Server का उपयोग करें।");
-    }
+    } catch (error) { alert("डेटा लोड नहीं हो सका। कृपया Live Server का उपयोग करें।"); }
 }
 
-// 2. Initialize UI
 function initializeUI() {
     let upaSelect = document.getElementById("upasarga");
     sanskritDatabase.upasargas.forEach(u => upaSelect.options.add(new Option(u.label, u.id)));
 
     let dhatuSelect = document.getElementById("dhatu");
-    for (let key in sanskritDatabase.dhatus) {
-        dhatuSelect.options.add(new Option(sanskritDatabase.dhatus[key].label, key));
-    }
+    for (let key in sanskritDatabase.dhatus) dhatuSelect.options.add(new Option(sanskritDatabase.dhatus[key].label, key));
 
     let pratSelect = document.getElementById("pratyaya");
-    for (let key in sanskritDatabase.pratyayas) {
-        pratSelect.options.add(new Option(sanskritDatabase.pratyayas[key].label, key));
-    }
+    for (let key in sanskritDatabase.pratyayas) pratSelect.options.add(new Option(sanskritDatabase.pratyayas[key].label, key));
 
     let dropdownContainer = document.getElementById("sutraDropdown");
     sanskritDatabase.sutras.forEach(s => {
@@ -51,7 +36,9 @@ function initializeUI() {
 
 window.onload = loadDatabase;
 
-// 3. PANINIAN RULE ENGINE
+// ==================================================
+// 🛠️ MAIN PANINIAN RULE ENGINE 🛠️
+// ==================================================
 function generateKridanta() {
     let upa = document.getElementById("upasarga").value;
     let dhatuStr = document.getElementById("dhatu").value;
@@ -63,69 +50,71 @@ function generateKridanta() {
 
     steps.push(`<b>शुरुआत:</b> ${upa ? upa + ' + ' : ''}${dhatuStr} + ${pratStr}`);
 
-    // ल्यप् आदेश नियम
+    // --------------------------------------------------
+    // 👉 ब्लॉक 1: प्रत्यय के विशेष नियम (PRATYAYA EXCEPTIONS) 👈
+    // (जैसे क्त्वा का ल्यप् होना)
+    // --------------------------------------------------
     if (pratStr === "क्त्वा" && upa !== "") {
         steps.push(`उपसर्ग होने के कारण 'क्त्वा' के स्थान पर 'ल्यप्' आदेश हुआ।`);
         pratStr = "ल्यप्";
     }
+    // 👉 और प्रत्यय नियम यहाँ जोड़ें...
 
     let dhatuData = sanskritDatabase.dhatus[dhatuStr];
     let pratData = sanskritDatabase.pratyayas[pratStr];
-
     if (!dhatuData || !pratData) return;
 
     steps.push(`<b>इत्-लोप:</b> ${pratData.lopa} -> शेष बचा: <b>${pratData.real}</b>`);
-    
-    // ⭐ सुरक्षा चक्र: ल्यप् में हमेशा 'य' ही शेष रखेंगे (भले ही JSON में कुछ भी लिखा हो)
     let activePratyaya = (pratStr === "ल्यप्") ? "य" : pratData.real;
     let activeDhatu = dhatuStr;
 
-    // इट्-आगम (Set/Anit Logic)
+    // इट्-आगम (Set/Anit)
     let itAgama = false;
-    if (pratStr !== "ल्यप्") { // ल्यप् में इट् नहीं होता
+    if (pratStr !== "ल्यप्") {
         if (dhatuData.isSet && pratData.isValadi) {
             itAgama = true;
             steps.push(`<b>इट्-आगम:</b> धातु सेट् है और प्रत्यय वलादि है, अतः 'इट् (इ)' का आगम हुआ।`);
         } else if (!dhatuData.isSet && pratData.isValadi) {
             steps.push(`धातु अनिट् है, अतः 'इट्' का आगम नहीं हुआ।`);
-        } else if (!pratData.isValadi) {
-            steps.push(`प्रत्यय अजादि है, अतः 'इट्' का आगम नहीं हुआ।`);
         }
     }
 
-    // गुण / वृद्धि Logic
+    // गुण / वृद्धि (Kit, Nnit, Akit)
     if (pratData.type === "kit") {
-        steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित् है, अतः 'क्ङिति च' सूत्र से गुण/वृद्धि नहीं होगी।`);
+        steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित् है, अतः गुण/वृद्धि नहीं होगी।`);
         activeDhatu = dhatuStr; 
-    } 
-    else if (pratData.type === "nnit") {
+    } else if (pratData.type === "nnit") {
         activeDhatu = dhatuData.vriddhi;
         steps.push(`<b>वृद्धि:</b> प्रत्यय ञित्/णित् है, अतः धातु को वृद्धि हुई -> <b>${activeDhatu}</b>`);
-    } 
-    else if (pratData.type === "akit") {
+    } else if (pratData.type === "akit") {
         activeDhatu = dhatuData.guna;
-        steps.push(`<b>गुण:</b> 'सार्वधातुकार्धधातुकयोः' से धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
+        steps.push(`<b>गुण:</b> धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
     }
 
-    // ⭐ तुक् (त्) आगम का परफेक्ट लॉजिक ⭐
+    // तुक् (त्) आगम (ल्यप् के लिए)
     if (pratStr === "ल्यप्") {
-        // संस्कृत की ह्रस्व मात्राएँ (अ, इ, उ, ऋ) 
         let shortVowels = ["अ", "इ", "उ", "ऋ", "ि", "ु", "ृ"]; 
-        let lastChar = activeDhatu.slice(-1);
-        
-        if (shortVowels.includes(lastChar)) {
-            activePratyaya = "त्य"; // 'य' के आगे 'त्' लगा दिया
-            steps.push(`<b>तुक् आगम:</b> धातु ह्रस्वान्त है, अतः 'ह्रस्वस्य पिति कृति तुक्' से 'तुक् (त्)' का आगम हुआ।`);
-        } else {
-            steps.push(`<b>तुक् निषेध:</b> धातु हलन्त या दीर्घ-स्वरान्त है, अतः 'तुक्' आगम नहीं हुआ।`);
+        if (shortVowels.includes(activeDhatu.slice(-1))) {
+            activePratyaya = "त्य";
+            steps.push(`<b>तुक् आगम:</b> धातु ह्रस्वान्त है, अतः 'तुक् (त्)' का आगम हुआ।`);
         }
     }
 
-    // विशेष अपवाद (गम् + क्त = गत)
+    // --------------------------------------------------
+    // 👉 ब्लॉक 2: धातु के विशेष नियम (DHATU EXCEPTIONS) 👈
+    // (जैसे गम् + क्त = गत, हन् + क्त = हत)
+    // --------------------------------------------------
     if (dhatuStr === "गम्" && (pratStr === "क्त" || pratStr === "क्त्वा")) {
         activeDhatu = "ग";
         steps.push(`विशेष नियम: 'अनुदात्तोपदेश...' से मकार का लोप हुआ।`);
     }
+    // 👉 नई धातु के अपवाद यहाँ जोड़ें...
+    /* उदाहरण:
+    if (dhatuStr === "हन्" && pratStr === "क्त") {
+        activeDhatu = "ह";
+        steps.push(`मकार/नकार का लोप हुआ।`);
+    }
+    */
 
     // संयोजन (Joining)
     if (itAgama) {
@@ -133,21 +122,33 @@ function generateKridanta() {
     } else {
         baseForm = activeDhatu + activePratyaya; 
         
-        // हलन्त सन्धि फिक्स (गम् + तव्य = गन्तव्य)
-        if (baseForm.includes("म्त") || baseForm.includes("म्ता")) {
-            baseForm = baseForm.replace("म्त", "न्त").replace("म्ता", "न्ता");
+        // --------------------------------------------------
+        // 👉 ब्लॉक 3: हलन्त सन्धि के विशेष नियम (SANDHI EXCEPTIONS) 👈
+        // (जैसे म्+त = न्त, च्+त = क्त, श्+त = ष्ट)
+        // --------------------------------------------------
+        if (baseForm.includes("म्त") || baseForm.includes("म्ता") || baseForm.includes("म्त्व")) {
+            baseForm = baseForm.replace("म्त", "न्त").replace("म्त्व", "न्त्व");
             steps.push(`अनुस्वार/परसवर्ण सन्धि से 'म्' को 'न्' हुआ।`);
         }
+        // 👉 नए सन्धि नियम यहाँ जोड़ें...
+        /* उदाहरण:
+        if (baseForm.includes("च्त")) {
+            baseForm = baseForm.replace("च्त", "क्त"); // पच् + त = पक्त (पक्व)
+            steps.push(`चोः कुः सूत्र से च् को क् हुआ।`);
+        }
+        */
     }
 
-    // वर्ण संयोजन (Halant + Vowel)
+    // वर्ण संयोजन
     let joinedForm = joinSanskrit(baseForm);
     if(baseForm !== joinedForm) {
         steps.push(`<b>वर्ण संयोजन:</b> हलन्त और स्वर मिलकर पूर्ण अक्षर बने -> <b>${joinedForm}</b>`);
         baseForm = joinedForm;
     }
 
-    // उपसर्ग सन्धि
+    // --------------------------------------------------
+    // 👉 ब्लॉक 4: उपसर्ग सन्धि (UPASARGA SANDHI) 👈
+    // --------------------------------------------------
     if (upa !== "") {
         let uBase = upa === "आङ्" ? "आ" : upa;
         steps.push(`उपसर्ग '${uBase}' का '${baseForm}' के साथ योग।`);
@@ -192,22 +193,11 @@ function toggleMobileMenu() {
     }
 }
 function closeMobileMenu() { if(window.innerWidth <= 768) toggleMobileMenu(); }
-function toggleSutraDropdown(event) {
-    event.stopPropagation();
-    document.getElementById("sutraDropdown").classList.toggle("show");
-}
-function toggleAccordion(event, element) {
-    event.stopPropagation();
-    element.parentElement.classList.toggle("active");
-}
-window.onclick = function(event) {
-    if (!event.target.closest('.nav-dropdown')) {
-        document.querySelectorAll(".dropdown-content.show").forEach(el => el.classList.remove('show'));
-    }
-}
+function toggleSutraDropdown(event) { event.stopPropagation(); document.getElementById("sutraDropdown").classList.toggle("show"); }
+function toggleAccordion(event, element) { event.stopPropagation(); element.parentElement.classList.toggle("active"); }
+window.onclick = function(event) { if (!event.target.closest('.nav-dropdown')) document.querySelectorAll(".dropdown-content.show").forEach(el => el.classList.remove('show')); }
 function toggleDark() {
     document.body.classList.toggle("dark");
-    let icon = document.getElementById("theme-icon");
-    icon.classList.replace(document.body.classList.contains("dark") ? "fa-moon" : "fa-sun", document.body.classList.contains("dark") ? "fa-sun" : "fa-moon");
+    document.getElementById("theme-icon").classList.replace(document.body.classList.contains("dark") ? "fa-moon" : "fa-sun", document.body.classList.contains("dark") ? "fa-sun" : "fa-moon");
     closeMobileMenu();
 }
