@@ -3,17 +3,8 @@ let sanskritDatabase = {};
 // वर्ण संयोजन सहायक फंक्शन (Halant + Vowel Joiner)
 function joinSanskrit(text) {
     const vowelMap = {
-        '्अ': '',
-        '्आ': 'ा',
-        '्इ': 'ि',
-        '्ई': 'ी',
-        '्उ': 'ु',
-        '्ऊ': 'ू',
-        '्ऋ': 'ृ',
-        '्ए': 'े',
-        '्ऐ': 'ै',
-        '्ओ': 'ो',
-        '्औ': 'ौ'
+        '्अ': '', '्आ': 'ा', '्इ': 'ि', '्ई': 'ी', '्उ': 'ु',
+        '्ऊ': 'ू', '्ऋ': 'ृ', '्ए': 'े', '्ऐ': 'ै', '्ओ': 'ो', '्औ': 'ौ'
     };
     for (let [key, val] of Object.entries(vowelMap)) {
         text = text.split(key).join(val);
@@ -83,59 +74,64 @@ function generateKridanta() {
 
     if (!dhatuData || !pratData) return;
 
-    // स्टेप 1: इत्-संज्ञा लोप
     steps.push(`<b>इत्-लोप:</b> ${pratData.lopa} -> शेष बचा: <b>${pratData.real}</b>`);
-    let activePratyaya = pratData.real;
+    
+    // ⭐ सुरक्षा चक्र: ल्यप् में हमेशा 'य' ही शेष रखेंगे (भले ही JSON में कुछ भी लिखा हो)
+    let activePratyaya = (pratStr === "ल्यप्") ? "य" : pratData.real;
     let activeDhatu = dhatuStr;
 
-    // स्टेप 2: इट्-आगम (Set/Anit Logic)
+    // इट्-आगम (Set/Anit Logic)
     let itAgama = false;
-    if (pratStr !== "ल्यप्") { // ल्यप् में सामान्यतः इट् नहीं होता
+    if (pratStr !== "ल्यप्") { // ल्यप् में इट् नहीं होता
         if (dhatuData.isSet && pratData.isValadi) {
             itAgama = true;
             steps.push(`<b>इट्-आगम:</b> धातु सेट् है और प्रत्यय वलादि है, अतः 'इट् (इ)' का आगम हुआ।`);
         } else if (!dhatuData.isSet && pratData.isValadi) {
             steps.push(`धातु अनिट् है, अतः 'इट्' का आगम नहीं हुआ।`);
         } else if (!pratData.isValadi) {
-            steps.push(`प्रत्यय अजादि (स्वर से शुरू) है, अतः 'इट्' का आगम नहीं हुआ।`);
+            steps.push(`प्रत्यय अजादि है, अतः 'इट्' का आगम नहीं हुआ।`);
         }
     }
 
-    // स्टेप 3: गुण / वृद्धि (Kit, Nnit, Akit Logic)
+    // गुण / वृद्धि Logic
     if (pratData.type === "kit") {
         steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित् है, अतः 'क्ङिति च' सूत्र से गुण/वृद्धि नहीं होगी।`);
         activeDhatu = dhatuStr; 
     } 
     else if (pratData.type === "nnit") {
         activeDhatu = dhatuData.vriddhi;
-        steps.push(`<b>वृद्धि:</b> प्रत्यय ञित्/णित् होने से धातु को वृद्धि हुई -> <b>${activeDhatu}</b>`);
+        steps.push(`<b>वृद्धि:</b> प्रत्यय ञित्/णित् है, अतः धातु को वृद्धि हुई -> <b>${activeDhatu}</b>`);
     } 
     else if (pratData.type === "akit") {
         activeDhatu = dhatuData.guna;
         steps.push(`<b>गुण:</b> 'सार्वधातुकार्धधातुकयोः' से धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
     }
 
-    // स्टेप 4: ल्यप् में तुक् (त्) आगम
+    // ⭐ तुक् (त्) आगम का परफेक्ट लॉजिक ⭐
     if (pratStr === "ल्यप्") {
-        let shortVowels = ["अ", "इ", "उ", "ऋ"];
+        // संस्कृत की ह्रस्व मात्राएँ (अ, इ, उ, ऋ) 
+        let shortVowels = ["अ", "इ", "उ", "ऋ", "ि", "ु", "ृ"]; 
         let lastChar = activeDhatu.slice(-1);
+        
         if (shortVowels.includes(lastChar)) {
-            activePratyaya = "त्य"; // जैसे: कृ + त्य = कृत्य
-            steps.push(`धातु ह्रस्वान्त है, अतः 'ह्रस्वस्य पिति कृति तुक्' से 'तुक् (त्)' का आगम हुआ।`);
+            activePratyaya = "त्य"; // 'य' के आगे 'त्' लगा दिया
+            steps.push(`<b>तुक् आगम:</b> धातु ह्रस्वान्त है, अतः 'ह्रस्वस्य पिति कृति तुक्' से 'तुक् (त्)' का आगम हुआ।`);
+        } else {
+            steps.push(`<b>तुक् निषेध:</b> धातु हलन्त या दीर्घ-स्वरान्त है, अतः 'तुक्' आगम नहीं हुआ।`);
         }
     }
 
-    // स्टेप 5: विशेष अपवाद (गम् + क्त = गत)
+    // विशेष अपवाद (गम् + क्त = गत)
     if (dhatuStr === "गम्" && (pratStr === "क्त" || pratStr === "क्त्वा")) {
         activeDhatu = "ग";
         steps.push(`विशेष नियम: 'अनुदात्तोपदेश...' से मकार का लोप हुआ।`);
     }
 
-    // स्टेप 6: संयोजन (Joining)
+    // संयोजन (Joining)
     if (itAgama) {
-        baseForm = activeDhatu + "इ" + activePratyaya; // पठ् + इ + तव्य = पठ्इतव्य
+        baseForm = activeDhatu + "इ" + activePratyaya; 
     } else {
-        baseForm = activeDhatu + activePratyaya; // भव् + अनीय = भव्अनीय
+        baseForm = activeDhatu + activePratyaya; 
         
         // हलन्त सन्धि फिक्स (गम् + तव्य = गन्तव्य)
         if (baseForm.includes("म्त") || baseForm.includes("म्ता")) {
@@ -144,14 +140,14 @@ function generateKridanta() {
         }
     }
 
-    // ⭐ जादुई संयोजन: 'व्' + 'अ' = 'व' ⭐
+    // वर्ण संयोजन (Halant + Vowel)
     let joinedForm = joinSanskrit(baseForm);
     if(baseForm !== joinedForm) {
         steps.push(`<b>वर्ण संयोजन:</b> हलन्त और स्वर मिलकर पूर्ण अक्षर बने -> <b>${joinedForm}</b>`);
         baseForm = joinedForm;
     }
 
-    // स्टेप 7: उपसर्ग सन्धि
+    // उपसर्ग सन्धि
     if (upa !== "") {
         let uBase = upa === "आङ्" ? "आ" : upa;
         steps.push(`उपसर्ग '${uBase}' का '${baseForm}' के साथ योग।`);
