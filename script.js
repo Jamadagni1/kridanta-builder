@@ -8,6 +8,7 @@ async function loadDatabase() {
         sanskritDatabase = await response.json();
         initializeUI();
     } catch (error) {
+        console.error("डेटाबेस लोड करने में त्रुटि:", error);
         alert("डेटा लोड नहीं हो सका। कृपया Live Server का उपयोग करें।");
     }
 }
@@ -18,10 +19,15 @@ function initializeUI() {
     sanskritDatabase.upasargas.forEach(u => upaSelect.options.add(new Option(u.label, u.id)));
 
     let dhatuSelect = document.getElementById("dhatu");
-    for (let key in sanskritDatabase.dhatus) dhatuSelect.options.add(new Option(sanskritDatabase.dhatus[key].label, key));
+    for (let key in sanskritDatabase.dhatus) {
+        dhatuSelect.options.add(new Option(sanskritDatabase.dhatus[key].label, key));
+    }
 
+    // यहीं पर एरर था जिसे ठीक कर दिया गया है (forEach की जगह for...in लूप)
     let pratSelect = document.getElementById("pratyaya");
-    for (let key in sanskritDatabase.pratyayas) pratSelect.options.add(new Option(sanskritDatabase.pratyayas[key].label, key));
+    for (let key in sanskritDatabase.pratyayas) {
+        pratSelect.options.add(new Option(sanskritDatabase.pratyayas[key].label, key));
+    }
 
     let dropdownContainer = document.getElementById("sutraDropdown");
     sanskritDatabase.sutras.forEach(s => {
@@ -99,7 +105,7 @@ function generateKridanta() {
         if (activeDhatu.endsWith("्")) {
             baseForm = activeDhatu.slice(0, -1) + "ि" + activePratyaya;
         } else {
-            baseForm = activeDhatu + "ि" + activePratyaya; // Exception fallback
+            baseForm = activeDhatu + "ि" + activePratyaya;
         }
     } else {
         // बिना इट् आगम के सीधा जुड़ाव (कर् + तव्य = कर्तव्य)
