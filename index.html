@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sanskrit Magic Builder | WebApp</title>
-
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <header>
@@ -29,7 +26,7 @@
 
 <section class="hero">
     <h1>शब्द निर्माण का जादू! ✨</h1>
-    <p>धातु और प्रत्यय को मिलाओ, और देखो नया शब्द कैसे बनता है!</p>
+    <p>धातु और प्रत्यय को मिलाओ, या अपनी मर्जी से कोई भी धातु टाइप करो!</p>
 </section>
 
 <div class="main-container" id="tool">
@@ -37,15 +34,18 @@
         <div class="input-grid">
             <div class="input-group">
                 <label class="label-upa"><i class="fa-solid fa-puzzle-piece"></i> उपसर्ग</label>
-                <select id="upasarga" class="sanskrit-text select-upa"></select>
+                <input type="text" id="upasarga" class="sanskrit-text select-upa" list="upaList" placeholder="चुनें या टाइप करें..." autocomplete="off">
+                <datalist id="upaList"></datalist>
             </div>
             <div class="input-group">
                 <label class="label-dhatu"><i class="fa-solid fa-seedling"></i> धातु (मूल)</label>
-                <select id="dhatu" class="sanskrit-text select-dhatu"></select>
+                <input type="text" id="dhatu" class="sanskrit-text select-dhatu" list="dhatuList" placeholder="उदा. कृ, पठ्, लिख्..." autocomplete="off">
+                <datalist id="dhatuList"></datalist>
             </div>
             <div class="input-group">
                 <label class="label-prat"><i class="fa-solid fa-link"></i> प्रत्यय</label>
-                <select id="pratyaya" class="sanskrit-text select-prat"></select>
+                <input type="text" id="pratyaya" class="sanskrit-text select-prat" list="pratList" placeholder="उदा. तव्यत्, क्त्वा..." autocomplete="off">
+                <datalist id="pratList"></datalist>
             </div>
         </div>
 
@@ -66,31 +66,6 @@
         </div>
     </div>
 </div>
-
-<footer>
-    <div class="footer-grid">
-        <div class="footer-col">
-            <h3>संस्कृत मैजिक</h3>
-            <p>पाणिनीय व्याकरण के अनुसार कृदन्त शब्दों की रचना और उनकी सिद्धि प्रक्रिया को सरल और मनोरंजक तरीके से सीखें।</p>
-        </div>
-        <div class="footer-col">
-            <h3>लिंक्स</h3>
-            <a href="#">होम पेज</a>
-            <a href="#">हमारे बारे में</a>
-            <a href="#">संपर्क करें</a>
-        </div>
-        <div class="footer-col">
-            <h3>कानूनी जानकारी</h3>
-            <a href="#">प्राइवेसी पॉलिसी</a>
-            <a href="#">टर्म्स ऑफ सर्विस</a>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        &copy; 2026 SanskritTech WebApp. All rights reserved.
-    </div>
-</footer>
-
-<script src="script.js"></script>
 
 </body>
 </html>
