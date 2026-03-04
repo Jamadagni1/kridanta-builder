@@ -7,6 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* टाइपिंग बॉक्स की डिज़ाइन ठीक करने के लिए */
+        input[type="text"] { 
+            width: 100%; padding: 15px; border-radius: 12px; 
+            border: 2px solid var(--border-light); 
+            font-size: clamp(16px, 3vw, 20px); font-weight: 600; 
+            outline: none; transition: 0.3s; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); 
+        }
+        input[type="text"]:focus { border-color: #ec4899; }
+    </style>
 </head>
 <body>
 
@@ -26,7 +37,7 @@
 
 <section class="hero">
     <h1>शब्द निर्माण का जादू! ✨</h1>
-    <p>धातु और प्रत्यय को मिलाओ, या अपनी मर्जी से कोई भी धातु टाइप करो!</p>
+    <p>लिस्ट से चुनें या अपनी मर्जी से कोई भी धातु टाइप करें!</p>
 </section>
 
 <div class="main-container" id="tool">
@@ -67,5 +78,15 @@
     </div>
 </div>
 
+<footer>
+    <div class="footer-grid">
+        <div class="footer-col">
+            <h3>संस्कृत मैजिक</h3>
+            <p>पाणिनीय व्याकरण के अनुसार कृदन्त शब्दों की रचना और उनकी सिद्धि प्रक्रिया को सरल और मनोरंजक तरीके से सीखें।</p>
+        </div>
+    </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
