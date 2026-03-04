@@ -4,21 +4,15 @@ let sanskritDatabase = {};
 async function loadDatabase() {
     try {
         const response = await fetch('database.json');
-        
-        // Handle fetch errors gracefully
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
+        if (!response.ok) throw new Error(`HTTP error!`);
         sanskritDatabase = await response.json();
         initializeUI();
     } catch (error) {
-        console.error("डेटाबेस लोड करने में त्रुटि:", error);
-        alert("डेटा लोड नहीं हो सका। कृपया सुनिश्चित करें कि आप Live Server का उपयोग कर रहे हैं। (Error: " + error.message + ")");
+        alert("डेटा लोड नहीं हो सका। कृपया Live Server का उपयोग करें।");
     }
 }
 
-// 2. Initialize UI Components
+// 2. Initialize UI
 function initializeUI() {
     let upaSelect = document.getElementById("upasarga");
     sanskritDatabase.upasargas.forEach(u => upaSelect.options.add(new Option(u.label, u.id)));
@@ -27,7 +21,7 @@ function initializeUI() {
     for (let key in sanskritDatabase.dhatus) dhatuSelect.options.add(new Option(sanskritDatabase.dhatus[key].label, key));
 
     let pratSelect = document.getElementById("pratyaya");
-    sanskritDatabase.pratyayas.forEach(p => pratSelect.options.add(new Option(p.label, p.id)));
+    for (let key in sanskritDatabase.pratyayas) pratSelect.options.add(new Option(sanskritDatabase.pratyayas[key].label, key));
 
     let dropdownContainer = document.getElementById("sutraDropdown");
     sanskritDatabase.sutras.forEach(s => {
@@ -38,75 +32,98 @@ function initializeUI() {
     });
 }
 
-// Load database on window load
 window.onload = loadDatabase;
 
-// 3. Logic Engine to Generate Kridanta
+// 3. PANINIAN RULE ENGINE
 function generateKridanta() {
     let upa = document.getElementById("upasarga").value;
-    let dhatu = document.getElementById("dhatu").value;
-    let prat = document.getElementById("pratyaya").value;
+    let dhatuStr = document.getElementById("dhatu").value;
+    let pratStr = document.getElementById("pratyaya").value;
 
     let steps = [];
     let baseForm = "";
     let finalForm = "";
 
-    steps.push(`<b>शुरुआत:</b> ${upa ? upa + ' + ' : ''}${dhatu} + ${prat}`);
+    steps.push(`<b>शुरुआत:</b> ${upa ? upa + ' + ' : ''}${dhatuStr} + ${pratStr}`);
 
-    // Pre-processing for 'Lyp' based on Upasarga
-    if (prat === "क्त्वा" && upa !== "") {
-        steps.push(`<b>जादू (नियम):</b> उपसर्ग होने के कारण 'क्त्वा' बदल कर 'ल्यप्' बन गया!`);
-        prat = "ल्यप्";
+    // ल्यप् आदेश नियम
+    if (pratStr === "क्त्वा" && upa !== "") {
+        steps.push(`उपसर्ग होने के कारण 'क्त्वा' के स्थान पर 'ल्यप्' आदेश हुआ।`);
+        pratStr = "ल्यप्";
     }
 
-    // Step A: Check if Dhatu has Explicit Rules Hardcoded
-    let dhatuData = sanskritDatabase.dhatus[dhatu];
-    
-    if (dhatuData && dhatuData.rules && dhatuData.rules[prat]) {
-        let ruleObj = dhatuData.rules[prat];
-        baseForm = ruleObj.form;
-        ruleObj.steps.forEach(step => steps.push(step));
+    let dhatuData = sanskritDatabase.dhatus[dhatuStr];
+    let pratData = sanskritDatabase.pratyayas[pratStr];
+
+    if (!dhatuData || !pratData) return;
+
+    // स्टेप 1: इत्-संज्ञा लोप
+    steps.push(`<b>इत्-लोप:</b> ${pratData.lopa} -> शेष बचा: <b>${pratData.real}</b>`);
+    let activePratyaya = pratData.real;
+    let activeDhatu = dhatuStr;
+
+    // स्टेप 2: इट्-आगम (Set/Anit Logic)
+    let itAgama = false;
+    if (dhatuData.isSet && pratData.isValadi) {
+        itAgama = true;
+        steps.push(`<b>इट्-आगम:</b> धातु सेट् है और प्रत्यय वलादि है, अतः 'इट् (इ)' का आगम हुआ।`);
+    } else if (!dhatuData.isSet && pratData.isValadi) {
+        steps.push(`धातु अनिट् है, अतः 'इट्' का आगम नहीं हुआ।`);
+    } else if (!pratData.isValadi) {
+        steps.push(`प्रत्यय अजादि (स्वर से शुरू) है, अतः 'इट्' का आगम नहीं हुआ।`);
+    }
+
+    // स्टेप 3: गुण / वृद्धि (Kit, Nnit, Akit Logic)
+    if (pratData.type === "kit") {
+        steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित् है, अतः 'क्ङिति च' सूत्र से गुण/वृद्धि नहीं होगी।`);
+        activeDhatu = dhatuStr; 
     } 
-    else {
-        // Step B: Apply General Rules (Pattern Matching)
-        let ruleApplied = false;
+    else if (pratData.type === "nnit") {
+        activeDhatu = dhatuData.vriddhi;
+        steps.push(`<b>वृद्धि:</b> प्रत्यय ञित्/णित् होने से धातु को वृद्धि हुई -> <b>${activeDhatu}</b>`);
+    } 
+    else if (pratData.type === "akit") {
+        activeDhatu = dhatuData.guna;
+        steps.push(`<b>गुण:</b> 'सार्वधातुकार्धधातुकयोः' से धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
+    }
 
-        if (sanskritDatabase.generalRules) {
-            for (let rule of sanskritDatabase.generalRules) {
-                // If the Dhatu ends with the specified character(s) AND the Pratyay matches
-                if (dhatu.endsWith(rule.endsWith) && prat === rule.pratyaya) {
-                    
-                    // Logic: Chop off the ending characters and append the 'replaceWith' string
-                    baseForm = dhatu.slice(0, -rule.endsWith.length) + rule.replaceWith;
-                    
-                    rule.steps.forEach(step => steps.push(step));
-                    ruleApplied = true;
-                    break; // Stop looking once a rule matches
-                }
-            }
+    // स्टेप 4: संयोजन (Joining)
+    // विशेष अपवाद (गम् + क्त = गत)
+    if (dhatuStr === "गम्" && (pratStr === "क्त" || pratStr === "क्त्वा")) {
+        activeDhatu = "ग";
+        steps.push(`विशेष नियम: 'अनुदात्तोपदेश...' से मकार का लोप हुआ।`);
+    }
+
+    if (itAgama) {
+        // अगर धातु में हलन्त (्) है तो 'इ' मात्रा बनेगी (पठ् + इ = पठि)
+        if (activeDhatu.endsWith("्")) {
+            baseForm = activeDhatu.slice(0, -1) + "ि" + activePratyaya;
+        } else {
+            baseForm = activeDhatu + "ि" + activePratyaya; // Exception fallback
         }
-
-        // Step C: Fallback to General Join if no rules matched
-        if (!ruleApplied) {
-            baseForm = dhatu + "-" + prat;
-            steps.push(`सामान्य संयोजन (General join).`);
+    } else {
+        // बिना इट् आगम के सीधा जुड़ाव (कर् + तव्य = कर्तव्य)
+        baseForm = activeDhatu + activePratyaya;
+        
+        // हलन्त सन्धि फिक्स (गम् + तव्य = गन्तव्य)
+        if (baseForm.includes("म्त") || baseForm.includes("म्ता")) {
+            baseForm = baseForm.replace("म्त", "न्त");
+            steps.push(`अनुस्वार/परसवर्ण सन्धि से 'म्' को 'न्' हुआ।`);
         }
     }
 
-    // Applying Upasarga Sandhi Logic
+    // स्टेप 5: उपसर्ग सन्धि
     if (upa !== "") {
         let uBase = upa === "आङ्" ? "आ" : upa;
-        steps.push(`अब '${uBase}' उपसर्ग को '${baseForm}' के साथ जोड़ेंगे।`);
+        steps.push(`उपसर्ग '${uBase}' का '${baseForm}' के साथ योग।`);
 
         if (uBase === "सम्") {
-            steps.push(`'म्' बिन्दु (अनुस्वार) बन गया -> सं + ${baseForm}`);
             finalForm = "सं" + baseForm;
+            steps.push(`'मोऽनुस्वारः' से 'म्' का अनुस्वार हुआ।`);
         } else if (uBase === "उत्") {
             finalForm = "उद्" + baseForm;
         } else if (uBase === "वि" && baseForm.startsWith("अ")) {
             finalForm = "व्य" + baseForm.slice(1);
-        } else if (uBase === "प्र" && baseForm === "कृत्य") {
-            finalForm = "प्रकृत्य";
         } else {
             finalForm = uBase + baseForm;
         }
@@ -116,20 +133,17 @@ function generateKridanta() {
 
     steps.push(`<b>अंतिम शब्द:</b> <span style="color:#ec4899; font-size:1.2em;">${finalForm}</span>`);
 
-    // Updating the DOM
     document.getElementById("finalOutput").innerText = finalForm;
     let stepsHtml = steps.map((s, index) => `<li class="step-item"><div style="background:#3b82f6; color:white; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:bold; font-size:14px;">${index+1}</div> <div>${s}</div></li>`).join("");
     document.getElementById("prakriyaSteps").innerHTML = stepsHtml;
 
     document.getElementById("resultSection").classList.add("active");
     document.getElementById("prakriyaBox").classList.remove("show");
-
     setTimeout(() => { document.getElementById("resultSection").scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
 }
 
-// 4. UI Interactions
+// UI Interactions
 function togglePrakriya() { document.getElementById("prakriyaBox").classList.toggle("show"); }
-
 function toggleMobileMenu() {
     const nav = document.getElementById("nav-menu");
     const icon = document.getElementById("menu-icon");
@@ -142,27 +156,20 @@ function toggleMobileMenu() {
         document.body.style.overflow = "auto";
     }
 }
-
 function closeMobileMenu() { if(window.innerWidth <= 768) toggleMobileMenu(); }
-
 function toggleSutraDropdown(event) {
     event.stopPropagation();
     document.getElementById("sutraDropdown").classList.toggle("show");
 }
-
 function toggleAccordion(event, element) {
     event.stopPropagation();
     element.parentElement.classList.toggle("active");
 }
-
-// Close Dropdowns on Click Outside
 window.onclick = function(event) {
     if (!event.target.closest('.nav-dropdown')) {
         document.querySelectorAll(".dropdown-content.show").forEach(el => el.classList.remove('show'));
     }
 }
-
-// Toggle Dark Mode
 function toggleDark() {
     document.body.classList.toggle("dark");
     let icon = document.getElementById("theme-icon");
