@@ -12,7 +12,7 @@ function autoGuna(d) {
     if (d.endsWith('ि') || d.endsWith('ी')) return d.slice(0, -1) + 'े';
     if (d.endsWith('ु') || d.endsWith('ू')) return d.slice(0, -1) + 'ो';
     if (d.endsWith('ृ')) return d.slice(0, -1) + 'र्';
-    return d; // अगर हलन्त है तो डिफ़ॉल्ट रूप
+    return d; 
 }
 
 function autoVriddhi(d) {
@@ -29,30 +29,40 @@ async function loadDatabase() {
         if (!response.ok) throw new Error(`HTTP error!`);
         sanskritDatabase = await response.json();
         initializeUI();
-    } catch (error) { alert("डेटा लोड नहीं हो सका। कृपया Live Server का उपयोग करें।"); }
+    } catch (error) { 
+        alert("डेटा लोड नहीं हो सका। कृपया सुनिश्चित करें कि Live Server चल रहा है।"); 
+    }
 }
 
-// 2. Initialize UI (Datalist Update)
+// 2. Initialize UI (Datalist Update with Safety Checks)
 function initializeUI() {
     let upaList = document.getElementById("upaList");
-    sanskritDatabase.upasargas.forEach(u => {
-        if(u.id !== "") upaList.insertAdjacentHTML('beforeend', `<option value="${u.id}">${u.label}</option>`);
-    });
+    if (upaList) {
+        sanskritDatabase.upasargas.forEach(u => {
+            if(u.id !== "") upaList.insertAdjacentHTML('beforeend', `<option value="${u.id}">${u.label}</option>`);
+        });
+    }
 
     let dhatuList = document.getElementById("dhatuList");
-    for (let key in sanskritDatabase.dhatus) {
-        dhatuList.insertAdjacentHTML('beforeend', `<option value="${key}">${sanskritDatabase.dhatus[key].label}</option>`);
+    if (dhatuList) {
+        for (let key in sanskritDatabase.dhatus) {
+            dhatuList.insertAdjacentHTML('beforeend', `<option value="${key}">${sanskritDatabase.dhatus[key].label}</option>`);
+        }
     }
 
     let pratList = document.getElementById("pratList");
-    for (let key in sanskritDatabase.pratyayas) {
-        pratList.insertAdjacentHTML('beforeend', `<option value="${key}">${sanskritDatabase.pratyayas[key].label}</option>`);
+    if (pratList) {
+        for (let key in sanskritDatabase.pratyayas) {
+            pratList.insertAdjacentHTML('beforeend', `<option value="${key}">${sanskritDatabase.pratyayas[key].label}</option>`);
+        }
     }
 
     let dropdownContainer = document.getElementById("sutraDropdown");
-    sanskritDatabase.sutras.forEach(s => {
-        dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-    });
+    if (dropdownContainer) {
+        sanskritDatabase.sutras.forEach(s => {
+            dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
+        });
+    }
 }
 
 window.onload = loadDatabase;
@@ -65,7 +75,10 @@ function generateKridanta() {
     let dhatuStr = document.getElementById("dhatu").value.trim();
     let pratStr = document.getElementById("pratyaya").value.trim();
 
-    if(!dhatuStr || !pratStr) { alert("कृपया कम से कम एक धातु और प्रत्यय टाइप करें!"); return; }
+    if(!dhatuStr || !pratStr) { 
+        alert("कृपया कम से कम एक धातु और प्रत्यय टाइप करें!"); 
+        return; 
+    }
 
     let steps = [];
     let baseForm = "";
@@ -79,7 +92,7 @@ function generateKridanta() {
     }
 
     // --------------------------------------------------
-    // ⭐ डायनामिक फॉलबैक (अगर धातु/प्रत्यय JSON में नहीं है)
+    // ⭐ डायनामिक फॉलबैक (अज्ञात धातु/प्रत्यय के लिए)
     // --------------------------------------------------
     let dhatuData = sanskritDatabase.dhatus[dhatuStr];
     if (!dhatuData) {
@@ -97,12 +110,11 @@ function generateKridanta() {
         pratData = {
             real: pratStr,
             type: "akit",
-            isValadi: !['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ'].includes(pratStr.charAt(0)), // स्वर से शुरू है या नहीं
+            isValadi: !['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ'].includes(pratStr.charAt(0)), 
             lopa: "सामान्य कस्टम प्रत्यय"
         };
     }
 
-    // इत्-लोप
     steps.push(`<b>इत्-लोप:</b> ${pratData.lopa} -> शेष बचा: <b>${pratData.real}</b>`);
     let activePratyaya = (pratStr === "ल्यप्") ? "य" : pratData.real;
     let activeDhatu = dhatuStr;
@@ -193,7 +205,7 @@ function generateKridanta() {
     setTimeout(() => { document.getElementById("resultSection").scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
 }
 
-// UI Interactions (Same as before)
+// UI Interactions
 function togglePrakriya() { document.getElementById("prakriyaBox").classList.toggle("show"); }
 function toggleMobileMenu() {
     const nav = document.getElementById("nav-menu");
