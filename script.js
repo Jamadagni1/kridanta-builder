@@ -41,15 +41,18 @@ function autoVriddhi(d) {
     return d; 
 }
 
-// 1. Fetch JSON Data
+// 1. Fetch JSON Data (Cache-Busting के साथ - यह ब्राउज़र को बेवकूफ नहीं बनाने देगा)
 async function loadDatabase() {
     try {
-        const response = await fetch('database.json');
-        if (!response.ok) throw new Error(`HTTP error!`);
+        // getTime() की मदद से हर बार नया URL बनता है, जिससे पुरानी फ़ाइल लोड नहीं होती
+        const timestamp = new Date().getTime();
+        const response = await fetch(`database.json?v=${timestamp}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         sanskritDatabase = await response.json();
         initializeUI();
     } catch (error) { 
-        alert("डेटा लोड नहीं हो सका। कृपया सुनिश्चित करें कि Live Server चल रहा है।"); 
+        alert("डेटा लोड नहीं हो सका। कृपया JSON फ़ाइल की जाँच करें।"); 
+        console.error("Database Fetch Error:", error);
     }
 }
 
@@ -320,13 +323,11 @@ function performSearch() {
         return;
     }
 
-    // अगर डेटाबेस में examples एरे नहीं है, तो एरर से बचने के लिए चेक
     if (!sanskritDatabase.examples) {
         resultsDiv.innerHTML = `<p style="color:red; text-align:center;">डेटाबेस लोड हो रहा है...</p>`;
         return;
     }
 
-    // सर्च को स्मार्ट बनाना (ताकि आधा शब्द भी ढूँढ ले)
     let matchedExamples = sanskritDatabase.examples.filter(item => 
         item.ex.includes(query) || item.sutra.includes(query)
     );
@@ -340,7 +341,6 @@ function performSearch() {
     matchedExamples.forEach(match => {
         let sutraInfo = getSutraDetails(match.sutra);
         
-        // सर्च वर्ड को पीला हाईलाइट करना
         let regex = new RegExp(query, 'gi');
         let highlightedEx = match.ex.replace(regex, `<span style="background-color:yellow; color:black; border-radius:2px; padding:0 2px;">${query}</span>`);
 
