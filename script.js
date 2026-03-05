@@ -7,18 +7,43 @@ function joinSanskrit(text) {
     return text;
 }
 
-// नया: ऑटोमैटिक गुण और वृद्धि कैलकुलेटर (अज्ञात धातुओं के लिए)
+// ==================================================
+// ⭐ पाणिनीय प्रथम पाद (संज्ञा) लॉजिक (1.1.3, 1.1.51, 1.1.65) ⭐
+// ==================================================
+
 function autoGuna(d) {
+    // अन्त्य इक् (इ, उ, ऋ) को गुण 
     if (d.endsWith('ि') || d.endsWith('ी')) return d.slice(0, -1) + 'े';
     if (d.endsWith('ु') || d.endsWith('ू')) return d.slice(0, -1) + 'ो';
-    if (d.endsWith('ृ')) return d.slice(0, -1) + 'र्';
+    if (d.endsWith('ृ')) return d.slice(0, -1) + 'र्'; // उरण् रपरः (1.1.51)
+
+    // अलोऽन्त्यात् पूर्व उपधा (1.1.65) - उपधा इक् को गुण
+    if (d.endsWith('्')) {
+        return d.replace(/ि([क-ह]्)$/, 'े$1')
+                .replace(/ु([क-ह]्)$/, 'ो$1')
+                .replace(/ृ([क-ह]्)$/, 'र्$1');
+    }
     return d; 
 }
 
 function autoVriddhi(d) {
+    // अन्त्य इक् को वृद्धि
     if (d.endsWith('ि') || d.endsWith('ी')) return d.slice(0, -1) + 'ै';
     if (d.endsWith('ु') || d.endsWith('ू')) return d.slice(0, -1) + 'ौ';
-    if (d.endsWith('ृ')) return d.slice(0, -1) + 'ार्';
+    if (d.endsWith('ृ')) return d.slice(0, -1) + 'ार्'; // उरण् रपरः (1.1.51)
+
+    // उपधा 'अ' को वृद्धि 'आ' (अत उपधायाः)
+    // यदि धातु हलन्त है और उपधा में 'अ' (बिना मात्रा का व्यंजन) है
+    if (d.endsWith('्') && !d.match(/[ािीुूृेैोौ][क-ह]्$/) && !d.match(/[क-ह]्[क-ह]्$/)) {
+        return d.replace(/([क-ह])([क-ह]्)$/, '$1ा$2'); // जैसे: प ठ् -> पा ठ्
+    }
+    
+    // उपधा इक् को वृद्धि नहीं, केवल गुण होता है (पुगन्तलघूपधस्य च)
+    if (d.endsWith('्')) {
+        return d.replace(/ि([क-ह]्)$/, 'े$1')
+                .replace(/ु([क-ह]्)$/, 'ो$1')
+                .replace(/ृ([क-ह]्)$/, 'र्$1');
+    }
     return d; 
 }
 
@@ -34,7 +59,7 @@ async function loadDatabase() {
     }
 }
 
-// 2. Initialize UI (Datalist Update with Safety Checks)
+// 2. Initialize UI (Datalist & Sutra Update)
 function initializeUI() {
     let upaList = document.getElementById("upaList");
     if (upaList) {
@@ -59,9 +84,18 @@ function initializeUI() {
 
     let dropdownContainer = document.getElementById("sutraDropdown");
     if (dropdownContainer) {
-        sanskritDatabase.sutras.forEach(s => {
-            dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-        });
+        // सामान्य सूत्र
+        if (sanskritDatabase.sutras) {
+            sanskritDatabase.sutras.forEach(s => {
+                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
+            });
+        }
+        // संज्ञा सूत्र (हरे रंग के बॉर्डर के साथ)
+        if (sanskritDatabase.samjnaSutras) {
+            sanskritDatabase.samjnaSutras.forEach(s => {
+                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #10b981;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
+            });
+        }
     }
 }
 
@@ -91,14 +125,12 @@ function generateKridanta() {
         pratStr = "ल्यप्";
     }
 
-    // --------------------------------------------------
     // ⭐ डायनामिक फॉलबैक (अज्ञात धातु/प्रत्यय के लिए)
-    // --------------------------------------------------
     let dhatuData = sanskritDatabase.dhatus[dhatuStr];
     if (!dhatuData) {
-        steps.push(`<i>(नोट: यह धातु कस्टम है, सिस्टम ऑटोमैटिक नियम लगा रहा है)</i>`);
+        steps.push(`<i>(नोट: यह धातु कस्टम है, सिस्टम 'अलोऽन्त्यात् पूर्व उपधा' नियम लगा रहा है)</i>`);
         dhatuData = {
-            isSet: true, // अज्ञात को डिफ़ॉल्ट सेट् मानते हैं
+            isSet: true,
             guna: autoGuna(dhatuStr),
             vriddhi: autoVriddhi(dhatuStr)
         };
@@ -130,9 +162,9 @@ function generateKridanta() {
         }
     }
 
-    // गुण / वृद्धि
+    // गुण / वृद्धि (क्ङिति च)
     if (pratData.type === "kit") {
-        steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित् है, अतः गुण/वृद्धि नहीं होगी।`);
+        steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित् है, अतः 'क्ङिति च' से गुण/वृद्धि नहीं होगी।`);
         activeDhatu = dhatuStr; 
     } else if (pratData.type === "nnit") {
         activeDhatu = dhatuData.vriddhi;
