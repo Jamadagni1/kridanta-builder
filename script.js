@@ -41,10 +41,9 @@ function autoVriddhi(d) {
     return d; 
 }
 
-// 1. Fetch JSON Data (Cache-Busting के साथ - यह ब्राउज़र को बेवकूफ नहीं बनाने देगा)
+// 1. Fetch JSON Data (Cache-Busting के साथ)
 async function loadDatabase() {
     try {
-        // getTime() की मदद से हर बार नया URL बनता है, जिससे पुरानी फ़ाइल लोड नहीं होती
         const timestamp = new Date().getTime();
         const response = await fetch(`database.json?v=${timestamp}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -81,50 +80,36 @@ function initializeUI() {
 
     let dropdownContainer = document.getElementById("sutraDropdown");
     if (dropdownContainer) {
-        
-        // सामान्य सूत्र 
         if (sanskritDatabase.sutras) {
             sanskritDatabase.sutras.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-        
-        // पाद 1.1: संज्ञा सूत्र (हरे रंग के बॉर्डर के साथ)
         if (sanskritDatabase.samjnaSutras) {
             sanskritDatabase.samjnaSutras.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #10b981;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-        
-        // पाद 1.2: (नीले रंग के बॉर्डर के साथ)
         if (sanskritDatabase.pada_1_2) {
             sanskritDatabase.pada_1_2.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #3b82f6;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-
-        // पाद 1.3: (गुलाबी रंग के बॉर्डर के साथ)
         if (sanskritDatabase.pada_1_3) {
             sanskritDatabase.pada_1_3.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #ec4899;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-
-        // पाद 1.4: (सुनहरे/पीले रंग के बॉर्डर के साथ)
         if (sanskritDatabase.pada_1_4) {
             sanskritDatabase.pada_1_4.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #eab308;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-
-        // पाद 3.1: (गहरे बैंगनी रंग के बॉर्डर के साथ)
         if (sanskritDatabase.pada_3_1) {
             sanskritDatabase.pada_3_1.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #8b5cf6;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-        
-        // पाद 3.2: (समुद्री नीले / Teal रंग के बॉर्डर के साथ)
         if (sanskritDatabase.pada_3_2) {
             sanskritDatabase.pada_3_2.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #14b8a6;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
@@ -310,7 +295,7 @@ window.addEventListener('click', function(event) {
 });
 
 function getSutraDetails(sutraId) {
-    const allArrays = ['samjnaSutras', 'pada_1_2', 'pada_1_3', 'pada_1_4', 'pada_3_1'];
+    const allArrays = ['samjnaSutras', 'pada_1_2', 'pada_1_3', 'pada_1_4', 'pada_3_1', 'pada_3_2'];
     for (let arrayName of allArrays) {
         if (sanskritDatabase[arrayName]) {
             let foundSutra = sanskritDatabase[arrayName].find(s => s.id === sutraId);
@@ -348,7 +333,7 @@ function performSearch() {
         let sutraInfo = getSutraDetails(match.sutra);
         
         let regex = new RegExp(query, 'gi');
-        let highlightedEx = match.ex.replace(regex, `<span style="background-color:yellow; color:black; border-radius:2px; padding:0 2px;">${query}</span>`);
+        let highlightedEx = match.ex.replace(regex, `<span style="background-color:yellow; color:black; border-radius:2px; padding:0 2px;">$&</span>`);
 
         htmlOutput += `
             <div class="result-card">
