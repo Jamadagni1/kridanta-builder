@@ -285,3 +285,80 @@ function toggleDark() {
     document.getElementById("theme-icon").classList.replace(document.body.classList.contains("dark") ? "fa-moon" : "fa-sun", document.body.classList.contains("dark") ? "fa-sun" : "fa-moon");
     closeMobileMenu();
 }
+
+// ==================================================
+// 🔍 SEARCH EXAMPLES LOGIC (उदाहरण खोजें)
+// ==================================================
+
+// मॉडल खोलना और बंद करना
+function openSearchModal() {
+    document.getElementById("searchModal").style.display = "block";
+    document.getElementById("searchInput").focus();
+}
+
+function closeSearchModal() {
+    document.getElementById("searchModal").style.display = "none";
+    document.getElementById("searchInput").value = "";
+    document.getElementById("searchResults").innerHTML = "";
+}
+
+// अगर यूजर पॉपअप के बाहर क्लिक करे, तो भी बंद हो जाए
+window.addEventListener('click', function(event) {
+    let modal = document.getElementById("searchModal");
+    if (event.target == modal) {
+        closeSearchModal();
+    }
+});
+
+// किसी सूत्र का ID देकर उसकी पूरी जानकारी ढूँढने वाला फंक्शन
+function getSutraDetails(sutraId) {
+    // हमारे पास अलग-अलग पाद के एरे (Arrays) हैं, हम सबमें ढूँढेंगे
+    const allArrays = ['samjnaSutras', 'pada_1_2', 'pada_1_3', 'pada_1_4', 'pada_3_1'];
+    
+    for (let arrayName of allArrays) {
+        if (sanskritDatabase[arrayName]) {
+            let foundSutra = sanskritDatabase[arrayName].find(s => s.id === sutraId);
+            if (foundSutra) return foundSutra;
+        }
+    }
+    return { name: "अज्ञात सूत्र", desc: "विवरण उपलब्ध नहीं" };
+}
+
+// असली सर्च फंक्शन (जो टाइप करते ही काम करेगा)
+function performSearch() {
+    let query = document.getElementById("searchInput").value.trim();
+    let resultsDiv = document.getElementById("searchResults");
+    
+    // अगर सर्च बॉक्स खाली है
+    if (query.length === 0) {
+        resultsDiv.innerHTML = "";
+        return;
+    }
+
+    // JSON के "examples" एरे में ढूँढना
+    let matchedExamples = sanskritDatabase.examples.filter(item => item.ex.includes(query));
+
+    if (matchedExamples.length === 0) {
+        resultsDiv.innerHTML = `<p style="color:red; text-align:center; margin-top:20px;">कोई परिणाम नहीं मिला।</p>`;
+        return;
+    }
+
+    // परिणाम दिखाना
+    let htmlOutput = "";
+    matchedExamples.forEach(match => {
+        let sutraInfo = getSutraDetails(match.sutra); // सूत्र की जानकारी निकाली
+        
+        // सर्च किए गए शब्द को हाईलाइट (Bold) करना
+        let highlightedEx = match.ex.replace(new RegExp(query, 'g'), `<span style="background-color:yellow; color:black;">${query}</span>`);
+
+        htmlOutput += `
+            <div class="result-card">
+                <div class="ex-text sanskrit-text">${highlightedEx}</div>
+                <div class="su-text sanskrit-text"><b>सूत्र:</b> [${match.sutra}] ${sutraInfo.name}</div>
+                <div class="desc-text sanskrit-text">${sutraInfo.desc}</div>
+            </div>
+        `;
+    });
+
+    resultsDiv.innerHTML = htmlOutput;
+}
