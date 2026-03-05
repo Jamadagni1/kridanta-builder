@@ -1,6 +1,8 @@
 let sanskritDatabase = {};
 
-// वर्ण संयोजन सहायक फंक्शन (Halant + Vowel Joiner)
+// ==================================================
+// 1. वर्ण संयोजन सहायक (Halant + Vowel Joiner)
+// ==================================================
 function joinSanskrit(text) {
     const vowelMap = { '्अ': '', '्आ': 'ा', '्इ': 'ि', '्ई': 'ी', '्उ': 'ु', '्ऊ': 'ू', '्ऋ': 'ृ', '्ए': 'े', '्ऐ': 'ै', '्ओ': 'ो', '्औ': 'ौ' };
     for (let [key, val] of Object.entries(vowelMap)) { text = text.split(key).join(val); }
@@ -8,9 +10,8 @@ function joinSanskrit(text) {
 }
 
 // ==================================================
-// ⭐ पाणिनीय प्रथम पाद (संज्ञा) लॉजिक (1.1.3, 1.1.51, 1.1.65) ⭐
+// 2. गुण और वृद्धि लॉजिक (सार्वधातुकार्धधातुकयोः / अचो ञ्णिति)
 // ==================================================
-
 function autoGuna(d) {
     if (d.endsWith('ि') || d.endsWith('ी')) return d.slice(0, -1) + 'े';
     if (d.endsWith('ु') || d.endsWith('ू')) return d.slice(0, -1) + 'ो';
@@ -41,7 +42,53 @@ function autoVriddhi(d) {
     return d; 
 }
 
-// 1. Fetch JSON Data (Cache-Busting के साथ)
+// ==================================================
+// 3. पाणिनीय सन्धि इंजन (अकः सवर्णे, इको यणचि, आद् गुणः, आदि)
+// ==================================================
+function applySandhi(word1, word2) {
+    if (!word1) return word2;
+    if (!word2) return word1;
+
+    let w1 = word1.slice(0, -1); 
+    let lastChar = word1.slice(-1); 
+    let firstChar = word2.charAt(0); 
+    let w2 = word2.slice(1); 
+
+    let isVowel = ['अ','आ','इ','ई','उ','ऊ','ऋ','ए','ऐ','ओ','औ'].includes(firstChar);
+
+    // 1. अकः सवर्णे दीर्घः
+    if ((lastChar === 'अ' || lastChar === 'आ') && (firstChar === 'अ' || firstChar === 'आ')) return w1 + 'आ' + w2;
+    if ((lastChar === 'इ' || lastChar === 'ई') && (firstChar === 'इ' || firstChar === 'ई')) return w1 + 'ई' + w2;
+    if ((lastChar === 'उ' || lastChar === 'ऊ') && (firstChar === 'उ' || firstChar === 'ऊ')) return w1 + 'ऊ' + w2;
+    if ((lastChar === 'ऋ' || lastChar === 'ॠ') && (firstChar === 'ऋ' || firstChar === 'ॠ')) return w1 + 'ॠ' + w2;
+
+    // 2. आद् गुणः
+    if ((lastChar === 'अ' || lastChar === 'आ') && (firstChar === 'इ' || firstChar === 'ई')) return w1 + 'ए' + w2;
+    if ((lastChar === 'अ' || lastChar === 'आ') && (firstChar === 'उ' || firstChar === 'ऊ')) return w1 + 'ओ' + w2;
+    if ((lastChar === 'अ' || lastChar === 'आ') && firstChar === 'ऋ') return w1 + 'अर्' + w2;
+
+    // 3. वृद्धिरेचि
+    if ((lastChar === 'अ' || lastChar === 'आ') && (firstChar === 'ए' || firstChar === 'ऐ')) return w1 + 'ऐ' + w2;
+    if ((lastChar === 'अ' || lastChar === 'आ') && (firstChar === 'ओ' || firstChar === 'औ')) return w1 + 'औ' + w2;
+
+    // 4. इको यणचि
+    if ((lastChar === 'इ' || lastChar === 'ई') && isVowel) return w1 + 'य्' + firstChar + w2;
+    if ((lastChar === 'उ' || lastChar === 'ऊ') && isVowel) return w1 + 'व्' + firstChar + w2;
+    if (lastChar === 'ऋ' && isVowel) return w1 + 'र्' + firstChar + w2;
+
+    // 5. मोऽनुस्वारः (म् + व्यंजन = ं)
+    let isConsonant = !isVowel;
+    if (lastChar === 'म्' && isConsonant) {
+        // परसवर्ण सन्धि (अनुस्वारस्य ययि परसवर्णः - Optional but standard for formatting)
+        return w1 + 'ं' + firstChar + w2;
+    }
+
+    return word1 + word2;
+}
+
+// ==================================================
+// 4. डेटाबेस लोडिंग और UI सेटअप
+// ==================================================
 async function loadDatabase() {
     try {
         const timestamp = new Date().getTime();
@@ -55,7 +102,6 @@ async function loadDatabase() {
     }
 }
 
-// 2. Initialize UI (Datalist & Sutra Update)
 function initializeUI() {
     let upaList = document.getElementById("upaList");
     if (upaList && sanskritDatabase.upasargas) {
@@ -86,7 +132,7 @@ function initializeUI() {
             });
         }
         
-        // सम्पूर्ण अष्टाध्यायी के 32 पादों को उनके विशिष्ट रंगों के साथ लोड करने का ऑप्टिमाइज़्ड तरीका
+        // सम्पूर्ण अष्टाध्यायी के 32 पादों को लोड करना
         const padaConfig = [
             { key: 'samjnaSutras', color: '#10b981' }, { key: 'pada_1_2', color: '#3b82f6' },
             { key: 'pada_1_3', color: '#ec4899' }, { key: 'pada_1_4', color: '#eab308' },
@@ -115,11 +161,11 @@ function initializeUI() {
         });
     }
 }
-
 window.onload = loadDatabase;
 
+
 // ==================================================
-// 🛠️ MAIN DYNAMIC PANINIAN ENGINE 🛠️
+// 🛠️ 5. DYNAMIC PANINIAN ENGINE (ALL PRATYAYAS) 🛠️
 // ==================================================
 function generateKridanta() {
     let upa = document.getElementById("upasarga").value.trim();
@@ -137,57 +183,59 @@ function generateKridanta() {
 
     steps.push(`<b>शुरुआत:</b> ${upa ? upa + ' + ' : ''}${dhatuStr} + ${pratStr}`);
 
+    // 1. उपसर्ग के कारण क्त्वा का ल्यप्
     if (pratStr === "क्त्वा" && upa !== "") {
-        steps.push(`उपसर्ग होने के कारण 'क्त्वा' के स्थान पर 'ल्यप्' आदेश हुआ।`);
+        steps.push(`उपसर्ग होने के कारण 'समासेऽनञ्पूर्वे क्त्वो ल्यप्' (7.1.37) से 'क्त्वा' को 'ल्यप्' आदेश हुआ।`);
         pratStr = "ल्यप्";
     }
 
-    let dhatuData = sanskritDatabase.dhatus[dhatuStr];
+    let dhatuData = sanskritDatabase.dhatus ? sanskritDatabase.dhatus[dhatuStr] : null;
     if (!dhatuData) {
-        steps.push(`<i>(नोट: यह धातु कस्टम है, सिस्टम 'अलोऽन्त्यात् पूर्व उपधा' नियम लगा रहा है)</i>`);
-        dhatuData = {
-            isSet: true,
-            guna: autoGuna(dhatuStr),
-            vriddhi: autoVriddhi(dhatuStr)
-        };
+        steps.push(`<i>(नोट: धातु कस्टम है, सिस्टम 'अलोऽन्त्यात् पूर्व उपधा' से काम कर रहा है)</i>`);
+        dhatuData = { isSet: true, guna: autoGuna(dhatuStr), vriddhi: autoVriddhi(dhatuStr) };
     }
 
-    let pratData = sanskritDatabase.pratyayas[pratStr];
-    if (!pratData) {
-        steps.push(`<i>(नोट: यह प्रत्यय कस्टम है, इसे 'अकित्' मानकर प्रोसेस किया जा रहा है)</i>`);
-        pratData = {
-            real: pratStr,
-            type: "akit",
-            isValadi: !['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ'].includes(pratStr.charAt(0)), 
-            lopa: "सामान्य कस्टम प्रत्यय"
-        };
-    }
+    // प्रत्यय का स्वभाव निर्धारित करना (General Logic for all suffixes)
+    let pratData = sanskritDatabase.pratyayas ? sanskritDatabase.pratyayas[pratStr] : null;
+    let type = "akit"; // default
+    let realPratyaya = pratStr;
 
-    steps.push(`<b>इत्-लोप:</b> ${pratData.lopa} -> शेष बचा: <b>${pratData.real}</b>`);
-    let activePratyaya = (pratStr === "ल्यप्") ? "य" : pratData.real;
+    if(pratStr === "घञ्" || pratStr === "ण्यत्" || pratStr === "ण्वुल्") type = "nnit";
+    else if(pratStr === "क्त" || pratStr === "क्त्वा" || pratStr === "ल्यप्" || pratStr === "क्तिन्") type = "kit";
+
+    if(pratStr === "घञ्") realPratyaya = "अ";
+    if(pratStr === "ण्यत्" || pratStr === "ल्यप्" || pratStr === "यत्") realPratyaya = "य";
+    if(pratStr === "ण्वुल्") realPratyaya = "अक";
+    if(pratStr === "क्त") realPratyaya = "त";
+    if(pratStr === "क्त्वा") realPratyaya = "त्वा";
+    if(pratStr === "तृच्") realPratyaya = "तृ";
+    if(pratStr === "ल्युट्") realPratyaya = "अन";
+    if(pratStr === "अनीयर्") realPratyaya = "अनीय";
+
+    steps.push(`<b>इत्-लोप:</b> प्रत्यय का शेष भाग बचा: <b>${realPratyaya}</b>`);
+
+    let activePratyaya = realPratyaya;
     let activeDhatu = dhatuStr;
 
-    let itAgama = false;
-    if (pratStr !== "ल्यप्") {
-        if (dhatuData.isSet && pratData.isValadi) {
-            itAgama = true;
-            steps.push(`<b>इट्-आगम:</b> धातु सेट् और प्रत्यय वलादि है, अतः 'इट् (इ)' का आगम हुआ।`);
-        } else if (!dhatuData.isSet && pratData.isValadi) {
-            steps.push(`धातु अनिट् है, अतः 'इट्' का आगम नहीं हुआ।`);
-        }
-    }
-
-    if (pratData.type === "kit") {
-        steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित् है, अतः 'क्ङिति च' से गुण/वृद्धि नहीं होगी।`);
+    // 2. गुण/वृद्धि लॉजिक
+    if (type === "kit") {
+        steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित्/ङित् है, अतः 'क्ङिति च (1.1.5)' से गुण/वृद्धि निषिद्ध।`);
         activeDhatu = dhatuStr; 
-    } else if (pratData.type === "nnit") {
+    } else if (type === "nnit") {
         activeDhatu = dhatuData.vriddhi;
-        steps.push(`<b>वृद्धि:</b> धातु को वृद्धि हुई -> <b>${activeDhatu}</b>`);
-    } else if (pratData.type === "akit") {
+        steps.push(`<b>वृद्धि:</b> प्रत्यय ञित्/णित् होने से 'अचो ञ्णिति (7.2.115)' / 'अत उपधायाः' से वृद्धि -> <b>${activeDhatu}</b>`);
+        
+        // कुत्व विधान (चजोः कु घिण्ण्यतोः 7.3.52)
+        if (activeDhatu.endsWith('च्') || activeDhatu.endsWith('ज्')) {
+            activeDhatu = activeDhatu.replace(/च्$/, 'क्').replace(/ज्$/, 'ग्');
+            steps.push(`<b>कुत्व:</b> 'चजोः कु घिण्ण्यतोः' सूत्र से 'च्/ज्' के स्थान पर 'क्/ग्' हुआ -> <b>${activeDhatu}</b>`);
+        }
+    } else {
         activeDhatu = dhatuData.guna;
-        steps.push(`<b>गुण:</b> धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
+        steps.push(`<b>गुण:</b> 'सार्वधातुकार्धधातुकयोः (7.3.84)' से धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
     }
 
+    // 3. ल्यप् में तुक् आगम (ह्रस्वस्य पिति कृति तुक् 6.1.71)
     if (pratStr === "ल्यप्") {
         let shortVowels = ["अ", "इ", "उ", "ऋ", "ि", "ु", "ृ"]; 
         if (shortVowels.includes(activeDhatu.slice(-1))) {
@@ -196,47 +244,66 @@ function generateKridanta() {
         }
     }
 
-    if (dhatuStr === "गम्" && (pratStr === "क्त" || pratStr === "क्त्वा")) {
-        activeDhatu = "ग";
-        steps.push(`विशेष नियम: 'गम्' के मकार का लोप हुआ।`);
+    // 4. अनुनासिक लोप (गमहन... 6.4.98)
+    if ((dhatuStr === "गम्" || dhatuStr === "हन्" || dhatuStr === "रम्") && type === "kit") {
+        activeDhatu = activeDhatu.slice(0, -1); // Remove M/N
+        steps.push(`<b>अनुनासिक लोप:</b> कित् प्रत्यय परे 'गम्/हन्' आदि के म्/न् का लोप हुआ -> <b>${activeDhatu}</b>`);
     }
 
+    // 5. इट् आगम (आर्धधातुकस्येड् वलादेः 7.2.35)
+    let isValadi = !['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ', 'य'].includes(activePratyaya.charAt(0));
+    let itAgama = false;
+    if (type !== "kit" && pratStr !== "ल्यप्" && pratStr !== "घञ्" && pratStr !== "ण्यत्" && pratStr !== "ण्वुल्") {
+        if (dhatuData.isSet && isValadi) {
+            itAgama = true;
+            steps.push(`<b>इट्-आगम:</b> धातु सेट् और प्रत्यय वलादि है, अतः 'इट् (इ)' का आगम हुआ।`);
+        }
+    }
+
+    // 6. जोड़ना (Concatenation & Internal Sandhi)
     if (itAgama) {
         baseForm = activeDhatu + "इ" + activePratyaya; 
     } else {
         baseForm = activeDhatu + activePratyaya; 
-        if (baseForm.includes("म्त") || baseForm.includes("म्ता") || baseForm.includes("म्त्व")) {
+        // परसवर्ण: म् + त -> न्त
+        if (baseForm.includes("म्त") || baseForm.includes("म्त्व")) {
             baseForm = baseForm.replace("म्त", "न्त").replace("म्त्व", "न्त्व");
-            steps.push(`अनुस्वार/परसवर्ण सन्धि से 'म्' को 'न्' हुआ।`);
+            steps.push(`<b>परसवर्ण:</b> 'अनुस्वारस्य ययि परसवर्णः' से 'म्' को 'न्' हुआ।`);
         }
     }
 
     let joinedForm = joinSanskrit(baseForm);
     if(baseForm !== joinedForm) {
-        steps.push(`<b>वर्ण संयोजन:</b> हलन्त और स्वर मिलकर पूर्ण अक्षर बने -> <b>${joinedForm}</b>`);
+        steps.push(`<b>वर्ण संयोजन:</b> हलन्त और स्वर मिलकर पूर्ण पद बने -> <b>${joinedForm}</b>`);
         baseForm = joinedForm;
     }
 
+    // 7. सुप् विभक्ति (प्रातिपदिक कार्य)
+    if(pratStr === "घञ्" || pratStr === "क्त" || pratStr === "ण्वुल्") {
+        baseForm = baseForm + "ः";
+        steps.push(`<b>सुप्-विभक्ति:</b> पुँल्लिङ्ग प्रथमा एकवचन 'सु' का विसर्ग (ः) हुआ -> <b>${baseForm}</b>`);
+    } else if (pratStr === "ल्युट्") {
+        baseForm = baseForm + "म्";
+        steps.push(`<b>सुप्-विभक्ति:</b> नपुंसकलिङ्ग 'ल्युट्' के कारण 'सु' को 'अम्' हुआ -> <b>${baseForm}</b>`);
+    }
+
+    // 8. उपसर्ग योग (External Sandhi)
     if (upa !== "") {
         let uBase = upa === "आङ्" ? "आ" : upa;
-        steps.push(`उपसर्ग '${uBase}' का '${baseForm}' के साथ योग।`);
+        steps.push(`<b>उपसर्ग योग:</b> '${uBase}' का '${baseForm}' के साथ योग।`);
 
-        if (uBase === "सम्") {
-            finalForm = "सं" + baseForm;
-            steps.push(`'मोऽनुस्वारः' से 'म्' का अनुस्वार हुआ।`);
-        } else if (uBase === "उत्") {
-            finalForm = "उद्" + baseForm;
-        } else if (uBase === "वि" && baseForm.startsWith("अ")) {
-            finalForm = "व्य" + baseForm.slice(1);
-        } else {
-            finalForm = uBase + baseForm;
+        finalForm = applySandhi(uBase, baseForm);
+        
+        if(finalForm !== uBase + baseForm) {
+            steps.push(`<b>सन्धि:</b> पाणिनीय सन्धि नियमों (इको यणचि/मोऽनुस्वारः आदि) से शब्द बना -> <b>${finalForm}</b>`);
         }
     } else {
         finalForm = baseForm;
     }
 
-    steps.push(`<b>अंतिम शब्द:</b> <span style="color:#ec4899; font-size:1.2em;">${finalForm}</span>`);
+    steps.push(`<b>सिद्ध रूप:</b> <span style="color:#ec4899; font-size:1.2em;">${finalForm}</span>`);
 
+    // UI Update
     document.getElementById("finalOutput").innerText = finalForm;
     let stepsHtml = steps.map((s, index) => `<li class="step-item"><div style="background:#3b82f6; color:white; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:bold; font-size:14px;">${index+1}</div> <div>${s}</div></li>`).join("");
     document.getElementById("prakriyaSteps").innerHTML = stepsHtml;
@@ -246,7 +313,9 @@ function generateKridanta() {
     setTimeout(() => { document.getElementById("resultSection").scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
 }
 
-// UI Interactions
+// ==================================================
+// 6. UI Interactions & Utilities
+// ==================================================
 function togglePrakriya() { document.getElementById("prakriyaBox").classList.toggle("show"); }
 function toggleMobileMenu() {
     const nav = document.getElementById("nav-menu");
@@ -271,9 +340,8 @@ function toggleDark() {
 }
 
 // ==================================================
-// 🔍 SEARCH EXAMPLES LOGIC (सम्पूर्ण अष्टाध्यायी सर्च)
+// 7. SEARCH ENGINE
 // ==================================================
-
 function openSearchModal() {
     document.getElementById("searchModal").style.display = "block";
     document.getElementById("searchInput").focus();
@@ -292,7 +360,6 @@ window.addEventListener('click', function(event) {
     }
 });
 
-// सम्पूर्ण 32 पादों के ऐरे नाम
 function getSutraDetails(sutraId) {
     const allArrays = [
         'samjnaSutras', 'pada_1_2', 'pada_1_3', 'pada_1_4', 
