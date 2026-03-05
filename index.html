@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* टाइपिंग बॉक्स की डिज़ाइन ठीक करने के लिए */
+        /* टाइपिंग बॉक्स की डिज़ाइन ठीक करने के लिए */
         input[type="text"] { 
             width: 100%; padding: 15px; border-radius: 12px; 
             border: 2px solid var(--border-light); 
@@ -27,6 +27,8 @@
 
     <nav id="nav-menu">
         <a href="#" onclick="closeMobileMenu()"><i class="fa-solid fa-house"></i> होम</a>
+        <a href="#" onclick="openSearchModal(); closeMobileMenu();"><i class="fa-solid fa-magnifying-glass"></i> उदाहरण खोजें</a>
+        
         <div class="nav-dropdown">
             <button onclick="toggleSutraDropdown(event)"><i class="fa-solid fa-book-open"></i> व्याकरण सूत्र <i class="fa-solid fa-caret-down"></i></button>
             <div class="dropdown-content" id="sutraDropdown"></div>
@@ -75,6 +77,19 @@
                 <ul class="step-list sanskrit-text" id="prakriyaSteps"></ul>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeSearchModal()">&times;</span>
+        <h2 style="color: var(--text-dark); margin-bottom: 5px;"><i class="fa-solid fa-magnifying-glass" style="color:#ec4899;"></i> उदाहरण खोजें</h2>
+        <p style="margin-bottom: 20px; font-size: 0.9em; color: var(--text-light);">कोई भी शब्द टाइप करें (जैसे: कर्तव्यम्, ज्ञः, हार्यम्)</p>
+        
+        <input type="text" id="searchInput" class="sanskrit-text" placeholder="यहाँ टाइप करें..." onkeyup="performSearch()" autocomplete="off">
+        
+        <div id="searchResults" class="search-results">
+            </div>
     </div>
 </div>
 
