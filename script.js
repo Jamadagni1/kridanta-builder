@@ -10,13 +10,13 @@ const pratyayaDB = {
     "अण्": { real: "अ", type: "nnit", lopa: "ण् (हलन्त्यम्) -> वृद्धि" },
     "अतृन्": { real: "अत्", type: "nit", lopa: "न् (हलन्त्यम्), ऋ" },
     "अथुच्": { real: "अथु", type: "chit", lopa: "च् (हलन्त्यम्)" },
-    "अध्यै": { real: "अध्यै", type: "akit", lopa: "कोई नहीं" },
-    "अध्यैन्": { real: "अध्यै", type: "nit", lopa: "न् (हलन्त्यम्)" },
+    "अध्यै": { real: "अध्यै", type: "akit", lopa: "कोई नहीं", gender: "avyaya" },
+    "अध्यैन्": { real: "अध्यै", type: "nit", lopa: "न् (हलन्त्यम्)", gender: "avyaya" },
     "अनि": { real: "अनि", type: "akit", lopa: "कोई नहीं" },
     "अनीयर्": { real: "अनीय", type: "akit", lopa: "र् (हलन्त्यम्)", gender: "n" },
     "अप्": { real: "अ", type: "pit", lopa: "प् (हलन्त्यम्)" },
-    "असे": { real: "असे", type: "akit", lopa: "कोई नहीं" },
-    "असेन्": { real: "असे", type: "nit", lopa: "न् (हलन्त्यम्)" },
+    "असे": { real: "असे", type: "akit", lopa: "कोई नहीं", gender: "avyaya" },
+    "असेन्": { real: "असे", type: "nit", lopa: "न् (हलन्त्यम्)", gender: "avyaya" },
     "आरु": { real: "आरु", type: "akit", lopa: "कोई नहीं" },
     "आलुच्": { real: "आलु", type: "chit", lopa: "च् (हलन्त्यम्)" },
     "इञ्": { real: "इ", type: "nnit", lopa: "ञ् (हलन्त्यम्) -> वृद्धि" },
@@ -31,19 +31,21 @@ const pratyayaDB = {
     "एश्": { real: "ए", type: "shit", lopa: "श् (लशक्व०)" },
     "क": { real: "अ", type: "kit", lopa: "क् (लशक्व०) -> गुण निषेध" },
     "कञ्": { real: "अ", type: "kit", lopa: "क्, ञ् -> गुण निषेध" },
-    "कध्यै": { real: "अध्यै", type: "kit", lopa: "क्" },
+    "कध्यै": { real: "अध्यै", type: "kit", lopa: "क्", gender: "avyaya" },
+    "कध्यैन्": { real: "अध्यै", type: "kit", lopa: "क्, न्", gender: "avyaya" },
     "कप्": { real: "अ", type: "kit", lopa: "क्, प्" },
-    "कमुल्": { real: "अम्", type: "kit", lopa: "क्, ल्" },
-    "कसुन्": { real: "अस्", type: "kit", lopa: "क्, न्" },
+    "कमुल्": { real: "अम्", type: "kit", lopa: "क्, ल्", gender: "avyaya" },
+    "कसुन्": { real: "अस्", type: "kit", lopa: "क्, उ, न्", gender: "avyaya" },
+    "कसेन्": { real: "असे", type: "kit", lopa: "क्, न्", gender: "avyaya" },
     "कानच्": { real: "आन", type: "kit", lopa: "क्, च्" },
     "कि": { real: "इ", type: "kit", lopa: "क् -> गुण निषेध" },
     "किन्": { real: "इ", type: "kit", lopa: "क्, न्" },
     "कुरच्": { real: "उर", type: "kit", lopa: "क्, च्" },
-    "केन्": { real: "ए", type: "kit", lopa: "क्, न्" },
+    "केन्": { real: "ए", type: "kit", lopa: "क्, न्", gender: "avyaya" },
     "केन्य": { real: "एन्य", type: "kit", lopa: "क्" },
     "केलिमर्": { real: "एलिम", type: "kit", lopa: "क्, र्" },
     "क्त": { real: "त", type: "kit", lopa: "क् (लशक्व०) -> गुण निषेध", gender: "m" },
-    "क्तवतु": { real: "तवत्", type: "kit", lopa: "क्, उ" },
+    "क्तवतु": { real: "तवत्", type: "kit", lopa: "क्, उ", gender: "m" },
     "क्तिच्": { real: "ति", type: "kit", lopa: "क्, च्" },
     "क्तिन्": { real: "ति", type: "kit", lopa: "क्, न्", gender: "f" },
     "क्त्रि": { real: "त्रि", type: "kit", lopa: "क्" },
@@ -56,20 +58,20 @@ const pratyayaDB = {
     "क्वनिप्": { real: "वन्", type: "kit", lopa: "क्, इ, प्" },
     "क्वरप्": { real: "वर", type: "kit", lopa: "क्, प्" },
     "क्वसु": { real: "वस्", type: "kit", lopa: "क्, उ" },
-    "क्विन्": { real: "व्", type: "kit", lopa: "क्, इ, न् -> शून्य" },
-    "क्विप्": { real: "व्", type: "kit", lopa: "क्, इ, प् -> शून्य", gender: "avyaya" },
-    "क्से": { real: "से", type: "kit", lopa: "क्" },
+    "क्विन्": { real: "व्", type: "kit", lopa: "क्, इ, न् -> सर्वापहार लोप" },
+    "क्विप्": { real: "व्", type: "kit", lopa: "क्, इ, प् -> सर्वापहार लोप", gender: "avyaya" },
+    "क्से": { real: "से", type: "kit", lopa: "क्", gender: "avyaya" },
     "खच्": { real: "अ", type: "khit", lopa: "ख्, च् -> मुम् आगम" },
-    "खमुञ्": { real: "अम्", type: "khit", lopa: "ख्, उ, ञ्" },
+    "खमुञ्": { real: "अम्", type: "khit", lopa: "ख्, उ, ञ्", gender: "avyaya" },
     "खल्": { real: "अ", type: "khit", lopa: "ख्, ल्" },
-    "खश्": { real: "अ", type: "khit", lopa: "ख्, श्" },
+    "खश्": { real: "अ", type: "khit", lopa: "ख्, श् -> मुम् आगम" },
     "खिष्णुच्": { real: "इष्णु", type: "khit", lopa: "ख्, च्" },
     "खुकञ्": { real: "उक", type: "khit", lopa: "ख्, ञ्" },
     "ख्युन्": { real: "अन", type: "khit", lopa: "ख्, न् (यु -> अन)" },
     "ग्स्नु": { real: "स्नु", type: "git", lopa: "ग् -> गुण निषेध" },
-    "घ": { real: "अ", type: "ghit", lopa: "घ् -> कुत्व (च्/ज् को क्/ग्)" },
+    "घ": { real: "अ", type: "ghit", lopa: "घ् -> कुत्व (च्/ज् को क्/ग्)", kutva: true },
     "घञ्": { real: "अ", type: "nnit", lopa: "घ्, ञ् -> वृद्धि + कुत्व", kutva: true, gender: "m" },
-    "घिनुण्": { real: "इनु", type: "nnit", lopa: "घ्, ण् -> वृद्धि + कुत्व", kutva: true },
+    "घिनुण्": { real: "इन्", type: "nnit", lopa: "घ्, उ, ण् -> वृद्धि + कुत्व", kutva: true },
     "घुरच्": { real: "उर", type: "ghit", lopa: "घ्, च् -> कुत्व", kutva: true },
     "ङ्वनिप्": { real: "वन्", type: "ngit", lopa: "ङ्, इ, प् -> गुण निषेध" },
     "चानश्": { real: "आन", type: "shit", lopa: "च्, श्" },
@@ -89,22 +91,47 @@ const pratyayaDB = {
     "ण्वुच्": { real: "अक", type: "nnit", lopa: "ण्, च् (वु -> अक) -> वृद्धि" },
     "ण्वुल्": { real: "अक", type: "nnit", lopa: "ण्, ल् (वु -> अक) -> वृद्धि", gender: "m" },
     "तवै": { real: "तवै", type: "akit", lopa: "कोई नहीं", gender: "avyaya" },
+    "तवेङ्": { real: "तवे", type: "ngit", lopa: "ङ्", gender: "avyaya" },
+    "तवेन्": { real: "तवे", type: "nit", lopa: "न्", gender: "avyaya" },
     "तव्य": { real: "तव्य", type: "akit", lopa: "कोई नहीं", gender: "n" },
     "तव्यत्": { real: "तव्य", type: "tit", lopa: "त् -> स्वरित", gender: "n" },
     "तुमुन्": { real: "तुम्", type: "nit", lopa: "उ, न्", gender: "avyaya" },
     "तृच्": { real: "तृ", type: "chit", lopa: "च्", gender: "m_tri" },
-    "तृन्": { real: "तृ", type: "nit", lopa: "न्" },
-    "तोसुन्": { real: "तोस्", type: "nit", lopa: "उ, न्" },
+    "तृन्": { real: "तृ", type: "nit", lopa: "न्", gender: "m_tri" },
+    "तोसुन्": { real: "तोस्", type: "nit", lopa: "उ, न्", gender: "avyaya" },
     "त्वन्": { real: "त्व", type: "nit", lopa: "न्" },
     "थकन्": { real: "इक", type: "nit", lopa: "त्/थ् -> इक, न्" },
+    "नङ्": { real: "अ", type: "ngit", lopa: "न्, ङ्" },
+    "नजिङ्": { real: "अजि", type: "ngit", lopa: "न्, ङ्" },
+    "नन्": { real: "अ", type: "nit", lopa: "न्, न्" },
+    "मनिन्": { real: "मन्", type: "nit", lopa: "इ, न्" },
     "यत्": { real: "य", type: "tit", lopa: "त् -> गुण", gender: "n" },
-    "युच्": { real: "अन", type: "chit", lopa: "च् (यु -> अन)" },
+    "युच्": { real: "अन", type: "chit", lopa: "च् (यु -> अन)", gender: "f" },
+    "र": { real: "र", type: "akit", lopa: "कोई नहीं" },
+    "रु": { real: "रु", type: "akit", lopa: "कोई नहीं" },
     "ल्यप्": { real: "य", type: "kit", lopa: "ल्, प् -> गुण निषेध + तुक्", gender: "avyaya" },
+    "ल्यु": { real: "अन", type: "lit", lopa: "ल् (यु -> अन)", gender: "n" },
     "ल्युट्": { real: "अन", type: "lit", lopa: "ल्, ट् (यु -> अन)", gender: "n" },
+    "वनिप्": { real: "वन्", type: "pit", lopa: "इ, प्" },
+    "वरच्": { real: "वर", type: "chit", lopa: "च्" },
+    "विच्": { real: "व्", type "chit", lopa: "इ, च्" },
+    "विट्": { real: "व्", type: "tit", lopa: "इ, ट्" },
+    "वुञ्": { real: "अक", type: "nnit", lopa: "ञ् (वु -> अक)" },
+    "वुन्": { real: "अक", type: "nit", lopa: "न् (वु -> अक)" },
     "श": { real: "अ", type: "shit", lopa: "श् -> सार्वधातुक" },
-    "शतृ": { real: "अत्", type: "shit", lopa: "श्, ऋ" },
+    "शतृ": { real: "अत्", type: "shit", lopa: "श्, ऋ", gender: "m_at" },
+    "शध्यै": { real: "अध्यै", type: "shit", lopa: "श्", gender: "avyaya" },
+    "शध्यैन्": { real: "अध्यै", type: "shit", lopa: "श्, न्", gender: "avyaya" },
     "शानच्": { real: "आन", type: "shit", lopa: "श्, च्" },
-    "डर": { real: "अर", type: "dit", lopa: "ड् -> टि-लोप" }
+    "शानन्": { real: "आन", type: "shit", lopa: "श्, न्" },
+    "षाकन्": { real: "आक", type: "shit", lopa: "ष्, न्" },
+    "ष्ट्रन्": { real: "त्र", type "nit", lopa: "ष्, न्" },
+    "ष्वुन्": { real: "अक", type: "nit", lopa: "ष्, न् (वु -> अक)" },
+    "से": { real: "से", type: "akit", lopa: "कोई नहीं", gender: "avyaya" },
+    "सेन्": { real: "से", type: "nit", lopa: "न्", gender: "avyaya" },
+    "डर": { real: "अर", type: "dit", lopa: "ड् -> टि-लोप" },
+    "इकवक": { real: "इकवक", type: "akit", lopa: "कोई नहीं" },
+    "य": { real: "य", type: "akit", lopa: "कोई नहीं" }
 };
 
 // ==================================================
@@ -251,7 +278,17 @@ function generateKridanta() {
     }
 
     let dhatuData = sanskritDatabase.dhatus ? sanskritDatabase.dhatus[dhatuStr] : null;
-    let isSet = dhatuData ? dhatuData.isSet : true; // Default Assume Set
+    let activeDhatu = dhatuStr; // Default
+
+    if (!dhatuData) {
+        steps.push(`<i>(नोट: धातु कस्टम है, सिस्टम 'अलोऽन्त्यात् पूर्व उपधा' से काम कर रहा है)</i>`);
+        dhatuData = { isSet: true, guna: autoGuna(dhatuStr), vriddhi: autoVriddhi(dhatuStr), clean: dhatuStr };
+    } else {
+        activeDhatu = dhatuData.clean;
+        if(dhatuData.anubandha && dhatuData.anubandha !== "none") {
+            steps.push(`<b>इत्-संज्ञा व लोप:</b> 'आदिर्ञिटुडवः/हलन्त्यम्' आदि से <b>${dhatuData.anubandha}</b> का लोप हुआ। शेष धातु: <b>${activeDhatu}</b>`);
+        }
+    }
 
     let pratData = pratyayaDB[pratStr];
     if (!pratData) {
@@ -262,16 +299,15 @@ function generateKridanta() {
     }
 
     let activePratyaya = pratData.real;
-    let activeDhatu = dhatuStr;
 
     // गुण/वृद्धि लॉजिक
     if (pratData.type === "kit" || pratData.type === "ngit" || pratData.type === "git") {
-        steps.push(`<b>गुण/वृद्धि निषेध:</b> 'क्ङिति च (1.1.5)' से गुण/वृद्धि निषिद्ध।`);
-    } else if (pratData.type === "nnit") {
-        activeDhatu = autoVriddhi(dhatuStr);
-        steps.push(`<b>वृद्धि:</b> 'अचो ञ्णिति/अत उपधायाः' से धातु को वृद्धि -> <b>${activeDhatu}</b>`);
+        steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित्/ङित्/गित् है, अतः 'क्ङिति च (1.1.5)' से गुण/वृद्धि निषिद्ध।`);
+    } else if (pratData.type === "nnit" || pratData.type === "nit") {
+        activeDhatu = dhatuData.vriddhi;
+        steps.push(`<b>वृद्धि:</b> प्रत्यय ञित्/णित्/णित् होने से 'अचो ञ्णिति/अत उपधायाः' से धातु को वृद्धि -> <b>${activeDhatu}</b>`);
     } else {
-        activeDhatu = autoGuna(dhatuStr);
+        activeDhatu = dhatuData.guna;
         steps.push(`<b>गुण:</b> 'सार्वधातुकार्धधातुकयोः' से धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
     }
 
@@ -286,7 +322,7 @@ function generateKridanta() {
     // टि-लोप (डित् प्रत्यय)
     if (pratData.type === "dit") {
         activeDhatu = activeDhatu.replace(/[अाइईउऊऋएऐओऔ][क-ह]्?$/, ''); // सरल टि-लोप
-        steps.push(`<b>टि-लोप:</b> डित् प्रत्यय परे होने से 'टेः' (6.4.143) से अन्त्य स्वर का लोप -> <b>${activeDhatu}</b>`);
+        steps.push(`<b>टि-लोप:</b> डित् प्रत्यय परे होने से 'टेः' (6.4.143) से अन्त्य भाग का लोप -> <b>${activeDhatu}</b>`);
     }
 
     // ल्यप् में तुक् आगम
@@ -299,16 +335,16 @@ function generateKridanta() {
     }
 
     // अनुनासिक लोप
-    if ((dhatuStr === "गम्" || dhatuStr === "हन्" || dhatuStr === "रम्") && (pratData.type === "kit")) {
+    if ((activeDhatu.endsWith("म्") || activeDhatu.endsWith("न्")) && pratData.type === "kit") {
         activeDhatu = activeDhatu.slice(0, -1);
-        steps.push(`<b>अनुनासिक लोप:</b> कित् प्रत्यय परे 'गम्/हन्' के म्/न् का लोप हुआ -> <b>${activeDhatu}</b>`);
+        steps.push(`<b>अनुनासिक लोप:</b> कित् प्रत्यय परे 'गम्/हन्' आदि के म्/न् का लोप हुआ -> <b>${activeDhatu}</b>`);
     }
 
     // इट् आगम
     let isValadi = !['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ', 'य'].includes(activePratyaya.charAt(0));
     let itAgama = false;
     if (pratData.type !== "kit" && pratStr !== "ल्यप्" && !pratData.type.includes("nit") && !pratData.type.includes("hit")) {
-        if (isSet && isValadi) {
+        if (dhatuData.isSet && isValadi) {
             itAgama = true;
             steps.push(`<b>इट्-आगम:</b> धातु सेट् और प्रत्यय वलादि है, अतः 'इट् (इ)' का आगम हुआ।`);
         }
@@ -330,16 +366,22 @@ function generateKridanta() {
         baseForm = joinedForm;
     }
 
-    // सुप् विभक्ति
+    // सुप् विभक्ति (Gender processing)
     if (pratData.gender === "m") {
         baseForm = baseForm + "ः";
         steps.push(`<b>सुप्-विभक्ति:</b> पुँल्लिङ्ग प्रथमा एकवचन 'सु' का विसर्ग (ः) हुआ -> <b>${baseForm}</b>`);
     } else if (pratData.gender === "n") {
         baseForm = baseForm + "म्";
         steps.push(`<b>सुप्-विभक्ति:</b> नपुंसकलिङ्ग में 'सु' को 'अम्' हुआ -> <b>${baseForm}</b>`);
+    } else if (pratData.gender === "f") {
+        baseForm = baseForm + "ः"; // Like मतिः, श्रुतिः (for Ktin)
+        steps.push(`<b>सुप्-विभक्ति:</b> स्त्रीलिङ्ग प्रथमा एकवचन 'सु' का विसर्ग (ः) हुआ -> <b>${baseForm}</b>`);
     } else if (pratData.gender === "m_tri") {
-        baseForm = baseForm.replace(/ृ$/, 'ा');
+        baseForm = baseForm.replace(/ृ$/, 'ा'); // कर्ता
         steps.push(`<b>सुप्-विभक्ति:</b> ऋदन्त 'तृच्' को प्रथमा एकवचन में 'आ' हुआ -> <b>${baseForm}</b>`);
+    } else if (pratData.gender === "m_at") {
+        baseForm = baseForm.replace(/अत्$/, 'अन्'); // पचन्, गच्छन्
+        steps.push(`<b>सुप्-विभक्ति:</b> शतृ-अन्त 'अत्' को प्रथमा एकवचन में 'अन्' हुआ -> <b>${baseForm}</b>`);
     }
 
     // उपसर्ग योग
