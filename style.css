@@ -31,9 +31,10 @@
 html { scroll-behavior: smooth; }
 body { background: var(--bg-light); color: var(--text-light); transition: background 0.3s, color 0.3s; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-body.dark { background: var(--bg-dark); color: var(--text-dark);
+body.dark { 
+    background: var(--bg-dark); color: var(--text-dark);
     --color-upa-bg: rgba(16, 185, 129, 0.1); --color-dhatu-bg: rgba(59, 130, 246, 0.1); --color-prat-bg: rgba(249, 115, 22, 0.1);
-    --card-light: var(--card-dark); --border-light: var(--border-dark); --shadow: 0 10px 30px rgba(0,0,0,0.4);
+    --card-light: var(--card-dark); --border-light: var(--border-dark); --text-light: var(--text-dark); --bg-light: rgba(255,255,255,0.05); --shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
 .sanskrit-text { font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 1.1em; }
@@ -46,11 +47,9 @@ body.dark header { background: rgba(30, 30, 47, 0.95); box-shadow: 0 4px 15px rg
 
 nav { display: flex; gap: 20px; align-items: center; }
 nav button, nav a { color: var(--text-light); text-decoration: none; font-weight: 700; font-size: 18px; background: none; border: none; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-body.dark nav button, body.dark nav a { color: var(--text-dark); }
 nav button:hover, nav a:hover { color: #ec4899; }
 
 .hamburger { display: none; font-size: 26px; cursor: pointer; color: var(--text-light); border: none; background: none; }
-body.dark .hamburger { color: var(--text-dark); }
 
 /* --- DROPDOWN SUTRAS --- */
 .nav-dropdown { position: relative; }
@@ -114,11 +113,9 @@ body.dark .step-item { background: rgba(59, 130, 246, 0.1); }
 /* --- FOOTER --- */
 footer { background: var(--card-light); padding: 40px 5% 20px; border-top: 1px solid var(--border-light); margin-top: auto; }
 .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-bottom: 20px; }
-.footer-col h3 { color: var(--primary); margin-bottom: 15px; font-size: 20px; font-weight: 700; color: #ec4899; }
+.footer-col h3 { margin-bottom: 15px; font-size: 20px; font-weight: 700; color: #ec4899; }
 .footer-col p, .footer-col a { color: var(--text-light); font-size: 15px; text-decoration: none; display: block; margin-bottom: 8px; font-weight: 500; transition: 0.3s; }
-body.dark .footer-col p, body.dark .footer-col a { color: var(--text-dark); }
 .footer-col a:hover { color: #8b5cf6; }
-.footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid var(--border-light); font-size: 14px; color: #64748b; font-weight: 600; }
 
 /* --- ANIMATIONS --- */
 @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
@@ -132,7 +129,6 @@ body.dark .footer-col p, body.dark .footer-col a { color: var(--text-dark); }
 
     nav a, nav button { font-size: 22px; width: 100%; padding: 15px 0; border-bottom: 1px solid var(--border-light); justify-content: flex-start; }
 
-    /* Make dropdown behave like an accordion on mobile */
     .nav-dropdown { width: 100%; }
     .dropdown-content { position: static; transform: none; width: 100%; box-shadow: none; border: none; padding: 15px 0 0; background: transparent; min-width: auto; max-height: none; }
     body.dark .dropdown-content { background: transparent; }
@@ -152,7 +148,7 @@ body.dark .footer-col p, body.dark .footer-col a { color: var(--text-dark); }
 }
 
 .modal-content {
-    background-color: var(--card-bg);
+    background-color: var(--card-light);
     margin: 10% auto; 
     padding: 25px;
     border-radius: 15px;
@@ -161,11 +157,6 @@ body.dark .footer-col p, body.dark .footer-col a { color: var(--text-dark); }
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     position: relative;
     animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
 }
 
 .close-btn {
@@ -186,8 +177,8 @@ body.dark .footer-col p, body.dark .footer-col a { color: var(--text-dark); }
     border: 2px solid var(--border-light);
     border-radius: 8px;
     margin-bottom: 20px;
-    background: var(--bg-color);
-    color: var(--text-dark);
+    background: var(--bg-light);
+    color: var(--text-light);
 }
 
 #searchInput:focus {
@@ -201,7 +192,7 @@ body.dark .footer-col p, body.dark .footer-col a { color: var(--text-dark); }
 }
 
 .result-card {
-    background: var(--bg-color);
+    background: var(--bg-light);
     border-left: 4px solid #ec4899;
     padding: 12px;
     margin-bottom: 10px;
@@ -210,5 +201,5 @@ body.dark .footer-col p, body.dark .footer-col a { color: var(--text-dark); }
 }
 
 .ex-text { font-size: 1.2em; font-weight: bold; color: #ec4899; margin-bottom: 5px; }
-.su-text { font-size: 1em; color: var(--text-dark); margin-bottom: 3px; }
-.desc-text { font-size: 0.9em; color: var(--text-light); }
+.su-text { font-size: 1em; color: var(--text-light); margin-bottom: 3px; }
+.desc-text { font-size: 0.9em; color: var(--text-light); opacity: 0.8; }
