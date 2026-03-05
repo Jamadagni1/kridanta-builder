@@ -12,12 +12,10 @@ function joinSanskrit(text) {
 // ==================================================
 
 function autoGuna(d) {
-    // अन्त्य इक् (इ, उ, ऋ) को गुण 
     if (d.endsWith('ि') || d.endsWith('ी')) return d.slice(0, -1) + 'े';
     if (d.endsWith('ु') || d.endsWith('ू')) return d.slice(0, -1) + 'ो';
-    if (d.endsWith('ृ')) return d.slice(0, -1) + 'र्'; // उरण् रपरः (1.1.51)
+    if (d.endsWith('ृ')) return d.slice(0, -1) + 'र्'; 
 
-    // अलोऽन्त्यात् पूर्व उपधा (1.1.65) - उपधा इक् को गुण
     if (d.endsWith('्')) {
         return d.replace(/ि([क-ह]्)$/, 'े$1')
                 .replace(/ु([क-ह]्)$/, 'ो$1')
@@ -27,18 +25,14 @@ function autoGuna(d) {
 }
 
 function autoVriddhi(d) {
-    // अन्त्य इक् को वृद्धि
     if (d.endsWith('ि') || d.endsWith('ी')) return d.slice(0, -1) + 'ै';
     if (d.endsWith('ु') || d.endsWith('ू')) return d.slice(0, -1) + 'ौ';
-    if (d.endsWith('ृ')) return d.slice(0, -1) + 'ार्'; // उरण् रपरः (1.1.51)
+    if (d.endsWith('ृ')) return d.slice(0, -1) + 'ार्'; 
 
-    // उपधा 'अ' को वृद्धि 'आ' (अत उपधायाः)
-    // यदि धातु हलन्त है और उपधा में 'अ' (बिना मात्रा का व्यंजन) है
     if (d.endsWith('्') && !d.match(/[ािीुूृेैोौ][क-ह]्$/) && !d.match(/[क-ह]्[क-ह]्$/)) {
-        return d.replace(/([क-ह])([क-ह]्)$/, '$1ा$2'); // जैसे: प ठ् -> पा ठ्
+        return d.replace(/([क-ह])([क-ह]्)$/, '$1ा$2'); 
     }
     
-    // उपधा इक् को वृद्धि नहीं, केवल गुण होता है (पुगन्तलघूपधस्य च)
     if (d.endsWith('्')) {
         return d.replace(/ि([क-ह]्)$/, 'े$1')
                 .replace(/ु([क-ह]्)$/, 'ो$1')
@@ -62,21 +56,21 @@ async function loadDatabase() {
 // 2. Initialize UI (Datalist & Sutra Update)
 function initializeUI() {
     let upaList = document.getElementById("upaList");
-    if (upaList) {
+    if (upaList && sanskritDatabase.upasargas) {
         sanskritDatabase.upasargas.forEach(u => {
             if(u.id !== "") upaList.insertAdjacentHTML('beforeend', `<option value="${u.id}">${u.label}</option>`);
         });
     }
 
     let dhatuList = document.getElementById("dhatuList");
-    if (dhatuList) {
+    if (dhatuList && sanskritDatabase.dhatus) {
         for (let key in sanskritDatabase.dhatus) {
             dhatuList.insertAdjacentHTML('beforeend', `<option value="${key}">${sanskritDatabase.dhatus[key].label}</option>`);
         }
     }
 
     let pratList = document.getElementById("pratList");
-    if (pratList) {
+    if (pratList && sanskritDatabase.pratyayas) {
         for (let key in sanskritDatabase.pratyayas) {
             pratList.insertAdjacentHTML('beforeend', `<option value="${key}">${sanskritDatabase.pratyayas[key].label}</option>`);
         }
@@ -84,31 +78,36 @@ function initializeUI() {
 
     let dropdownContainer = document.getElementById("sutraDropdown");
     if (dropdownContainer) {
-        // सामान्य सूत्र
+        
+        // सामान्य सूत्र (पहले से मौजूद)
         if (sanskritDatabase.sutras) {
             sanskritDatabase.sutras.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-        // संज्ञा सूत्र (हरे रंग के बॉर्डर के साथ)
+        
+        // पाद 1.1: संज्ञा सूत्र (हरे रंग के बॉर्डर के साथ)
         if (sanskritDatabase.samjnaSutras) {
             sanskritDatabase.samjnaSutras.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #10b981;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-        // पाद 1.2 (नीले रंग के बॉर्डर के साथ)
+        
+        // पाद 1.2: (नीले रंग के बॉर्डर के साथ)
         if (sanskritDatabase.pada_1_2) {
             sanskritDatabase.pada_1_2.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #3b82f6;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-        // पाद 1.3 (लाल/गुलाबी रंग के बॉर्डर के साथ)
+
+        // पाद 1.3: (गुलाबी रंग के बॉर्डर के साथ) --> यही मिसिंग था!
         if (sanskritDatabase.pada_1_3) {
             sanskritDatabase.pada_1_3.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #ec4899;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-    }
+
+    } // End of dropdownContainer block
 }
 
 window.onload = loadDatabase;
