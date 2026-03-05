@@ -121,6 +121,11 @@ function initializeUI() {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #6366f1;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
+        // पाद 3.4: 
+        if (sanskritDatabase.pada_3_4) {
+            sanskritDatabase.pada_3_4.forEach(s => {
+                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #6366f1;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
+            });
     }
 }
 
@@ -301,7 +306,7 @@ window.addEventListener('click', function(event) {
 });
 
 function getSutraDetails(sutraId) {
-const allArrays = ['samjnaSutras', 'pada_1_2', 'pada_1_3', 'pada_1_4', 'pada_3_1', 'pada_3_2', 'pada_3_3'];    for (let arrayName of allArrays) {
+const allArrays = ['samjnaSutras', 'pada_1_2', 'pada_1_3', 'pada_1_4', 'pada_3_1', 'pada_3_2', 'pada_3_3','pada_3_4'];    for (let arrayName of allArrays) {
         if (sanskritDatabase[arrayName]) {
             let foundSutra = sanskritDatabase[arrayName].find(s => s.id === sutraId);
             if (foundSutra) return foundSutra;
