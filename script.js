@@ -96,12 +96,6 @@ function initializeUI() {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #10b981;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-        // पाद 1.2 (नीले रंग के बॉर्डर के साथ)
-        if (sanskritDatabase.pada_1_2) {
-            sanskritDatabase.pada_1_2.forEach(s => {
-                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #3b82f6;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-            });
-        }
     }
 }
 
