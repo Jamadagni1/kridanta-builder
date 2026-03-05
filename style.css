@@ -137,3 +137,78 @@ body.dark .footer-col p, body.dark .footer-col a { color: var(--text-dark); }
     .dropdown-content { position: static; transform: none; width: 100%; box-shadow: none; border: none; padding: 15px 0 0; background: transparent; min-width: auto; max-height: none; }
     body.dark .dropdown-content { background: transparent; }
 }
+
+/* =========================================
+   🔍 Search Modal Styles 
+   ========================================= */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; top: 0; 
+    width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.6); 
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    margin: 10% auto; 
+    padding: 25px;
+    border-radius: 15px;
+    width: 90%; 
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    position: relative;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.close-btn {
+    color: var(--text-light);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.close-btn:hover { color: #ec4899; }
+
+#searchInput {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 18px;
+    border: 2px solid var(--border-light);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: var(--bg-color);
+    color: var(--text-dark);
+}
+
+#searchInput:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+.search-results {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.result-card {
+    background: var(--bg-color);
+    border-left: 4px solid #ec4899;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.ex-text { font-size: 1.2em; font-weight: bold; color: #ec4899; margin-bottom: 5px; }
+.su-text { font-size: 1em; color: var(--text-dark); margin-bottom: 3px; }
+.desc-text { font-size: 0.9em; color: var(--text-light); }
