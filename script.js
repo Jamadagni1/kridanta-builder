@@ -85,46 +85,34 @@ function initializeUI() {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
-        if (sanskritDatabase.samjnaSutras) {
-            sanskritDatabase.samjnaSutras.forEach(s => {
-                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #10b981;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-            });
-        }
-        if (sanskritDatabase.pada_1_2) {
-            sanskritDatabase.pada_1_2.forEach(s => {
-                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #3b82f6;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-            });
-        }
-        if (sanskritDatabase.pada_1_3) {
-            sanskritDatabase.pada_1_3.forEach(s => {
-                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #ec4899;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-            });
-        }
-        if (sanskritDatabase.pada_1_4) {
-            sanskritDatabase.pada_1_4.forEach(s => {
-                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #eab308;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-            });
-        }
-        if (sanskritDatabase.pada_3_1) {
-            sanskritDatabase.pada_3_1.forEach(s => {
-                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #8b5cf6;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-            });
-        }
-        if (sanskritDatabase.pada_3_2) {
-            sanskritDatabase.pada_3_2.forEach(s => {
-                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #14b8a6;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-            });
-        }
-        if (sanskritDatabase.pada_3_3) {
-            sanskritDatabase.pada_3_3.forEach(s => {
-                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #6366f1;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-            });
-        }
-        if (sanskritDatabase.pada_3_4) {
-            sanskritDatabase.pada_3_4.forEach(s => {
-                dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #dc2626;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
-            });
-        }
+        
+        // सम्पूर्ण अष्टाध्यायी के 32 पादों को उनके विशिष्ट रंगों के साथ लोड करने का ऑप्टिमाइज़्ड तरीका
+        const padaConfig = [
+            { key: 'samjnaSutras', color: '#10b981' }, { key: 'pada_1_2', color: '#3b82f6' },
+            { key: 'pada_1_3', color: '#ec4899' }, { key: 'pada_1_4', color: '#eab308' },
+            { key: 'pada_2_1', color: '#b91c1c' }, { key: 'pada_2_2', color: '#f97316' },
+            { key: 'pada_2_3', color: '#d946ef' }, { key: 'pada_2_4', color: '#06b6d4' },
+            { key: 'pada_3_1', color: '#8b5cf6' }, { key: 'pada_3_2', color: '#14b8a6' },
+            { key: 'pada_3_3', color: '#6366f1' }, { key: 'pada_3_4', color: '#dc2626' },
+            { key: 'pada_4_1', color: '#f472b6' }, { key: 'pada_4_2', color: '#9333ea' },
+            { key: 'pada_4_3', color: '#e11d48' }, { key: 'pada_4_4', color: '#10b981' },
+            { key: 'pada_5_1', color: '#4f46e5' }, { key: 'pada_5_2', color: '#ea580c' },
+            { key: 'pada_5_3', color: '#14b8a6' }, { key: 'pada_5_4', color: '#0ea5e9' },
+            { key: 'pada_6_1', color: '#78350f' }, { key: 'pada_6_2', color: '#475569' },
+            { key: 'pada_6_3', color: '#3b82f6' }, { key: 'pada_6_4', color: '#f59e0b' },
+            { key: 'pada_7_1', color: '#8b5cf6' }, { key: 'pada_7_2', color: '#db2777' },
+            { key: 'pada_7_3', color: '#0284c7' }, { key: 'pada_7_4', color: '#84cc16' },
+            { key: 'pada_8_1', color: '#dc2626' }, { key: 'pada_8_2', color: '#f97316' },
+            { key: 'pada_8_3', color: '#eab308' }, { key: 'pada_8_4', color: '#ec4899' }
+        ];
+
+        padaConfig.forEach(config => {
+            if (sanskritDatabase[config.key]) {
+                sanskritDatabase[config.key].forEach(s => {
+                    dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid ${config.color};"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
+                });
+            }
+        });
     }
 }
 
@@ -283,7 +271,7 @@ function toggleDark() {
 }
 
 // ==================================================
-// 🔍 SEARCH EXAMPLES LOGIC (उदाहरण खोजें)
+// 🔍 SEARCH EXAMPLES LOGIC (सम्पूर्ण अष्टाध्यायी सर्च)
 // ==================================================
 
 function openSearchModal() {
@@ -304,8 +292,18 @@ window.addEventListener('click', function(event) {
     }
 });
 
+// सम्पूर्ण 32 पादों के ऐरे नाम
 function getSutraDetails(sutraId) {
-    const allArrays = ['samjnaSutras', 'pada_1_2', 'pada_1_3', 'pada_1_4', 'pada_3_1', 'pada_3_2', 'pada_3_3', 'pada_3_4'];
+    const allArrays = [
+        'samjnaSutras', 'pada_1_2', 'pada_1_3', 'pada_1_4', 
+        'pada_2_1', 'pada_2_2', 'pada_2_3', 'pada_2_4', 
+        'pada_3_1', 'pada_3_2', 'pada_3_3', 'pada_3_4',
+        'pada_4_1', 'pada_4_2', 'pada_4_3', 'pada_4_4',
+        'pada_5_1', 'pada_5_2', 'pada_5_3', 'pada_5_4',
+        'pada_6_1', 'pada_6_2', 'pada_6_3', 'pada_6_4',
+        'pada_7_1', 'pada_7_2', 'pada_7_3', 'pada_7_4',
+        'pada_8_1', 'pada_8_2', 'pada_8_3', 'pada_8_4'
+    ];
     for (let arrayName of allArrays) {
         if (sanskritDatabase[arrayName]) {
             let foundSutra = sanskritDatabase[arrayName].find(s => s.id === sutraId);
