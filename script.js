@@ -100,14 +100,14 @@ function initializeUI() {
             });
         }
 
-        // पाद 1.3: (गुलाबी रंग के बॉर्डर के साथ) --> यही मिसिंग था!
+        // पाद 1.3: (गुलाबी रंग के बॉर्डर के साथ)
         if (sanskritDatabase.pada_1_3) {
             sanskritDatabase.pada_1_3.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #ec4899;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
             });
         }
 
-        // पाद 1.4: (सुनहरे/पीले रंग के बॉर्डर के साथ)
+        // पाद 1.4: (सुनहरे/पीले रंग के बॉर्डर के साथ) --> यही हिस्सा आपके कोड में मिसिंग था
         if (sanskritDatabase.pada_1_4) {
             sanskritDatabase.pada_1_4.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #eab308;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
