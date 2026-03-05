@@ -79,7 +79,7 @@ function initializeUI() {
     let dropdownContainer = document.getElementById("sutraDropdown");
     if (dropdownContainer) {
         
-        // सामान्य सूत्र (पहले से मौजूद)
+        // सामान्य सूत्र 
         if (sanskritDatabase.sutras) {
             sanskritDatabase.sutras.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
@@ -107,7 +107,7 @@ function initializeUI() {
             });
         }
 
-        // पाद 1.4: (सुनहरे/पीले रंग के बॉर्डर के साथ) --> यही हिस्सा आपके कोड में मिसिंग था
+        // पाद 1.4: (सुनहरे/पीले रंग के बॉर्डर के साथ)
         if (sanskritDatabase.pada_1_4) {
             sanskritDatabase.pada_1_4.forEach(s => {
                 dropdownContainer.insertAdjacentHTML('beforeend', `<div class="sutra-item" style="border-left: 3px solid #eab308;"><div class="sutra-header sanskrit-text" onclick="toggleAccordion(event, this)">[${s.id}] ${s.name} <i class="fa-solid fa-chevron-down"></i></div><div class="sutra-desc sanskrit-text"><br>${s.desc}<br><br></div></div>`);
@@ -121,7 +121,7 @@ function initializeUI() {
             });
         }
 
-    } // End of dropdownContainer block
+    }
 }
 
 window.onload = loadDatabase;
@@ -150,7 +150,6 @@ function generateKridanta() {
         pratStr = "ल्यप्";
     }
 
-    // ⭐ डायनामिक फॉलबैक (अज्ञात धातु/प्रत्यय के लिए)
     let dhatuData = sanskritDatabase.dhatus[dhatuStr];
     if (!dhatuData) {
         steps.push(`<i>(नोट: यह धातु कस्टम है, सिस्टम 'अलोऽन्त्यात् पूर्व उपधा' नियम लगा रहा है)</i>`);
@@ -176,7 +175,6 @@ function generateKridanta() {
     let activePratyaya = (pratStr === "ल्यप्") ? "य" : pratData.real;
     let activeDhatu = dhatuStr;
 
-    // इट्-आगम
     let itAgama = false;
     if (pratStr !== "ल्यप्") {
         if (dhatuData.isSet && pratData.isValadi) {
@@ -187,7 +185,6 @@ function generateKridanta() {
         }
     }
 
-    // गुण / वृद्धि (क्ङिति च)
     if (pratData.type === "kit") {
         steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित् है, अतः 'क्ङिति च' से गुण/वृद्धि नहीं होगी।`);
         activeDhatu = dhatuStr; 
@@ -199,7 +196,6 @@ function generateKridanta() {
         steps.push(`<b>गुण:</b> धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
     }
 
-    // तुक् (त्) आगम
     if (pratStr === "ल्यप्") {
         let shortVowels = ["अ", "इ", "उ", "ऋ", "ि", "ु", "ृ"]; 
         if (shortVowels.includes(activeDhatu.slice(-1))) {
@@ -208,13 +204,11 @@ function generateKridanta() {
         }
     }
 
-    // विशेष अपवाद
     if (dhatuStr === "गम्" && (pratStr === "क्त" || pratStr === "क्त्वा")) {
         activeDhatu = "ग";
         steps.push(`विशेष नियम: 'गम्' के मकार का लोप हुआ।`);
     }
 
-    // संयोजन
     if (itAgama) {
         baseForm = activeDhatu + "इ" + activePratyaya; 
     } else {
@@ -225,14 +219,12 @@ function generateKridanta() {
         }
     }
 
-    // वर्ण संयोजन
     let joinedForm = joinSanskrit(baseForm);
     if(baseForm !== joinedForm) {
         steps.push(`<b>वर्ण संयोजन:</b> हलन्त और स्वर मिलकर पूर्ण अक्षर बने -> <b>${joinedForm}</b>`);
         baseForm = joinedForm;
     }
 
-    // उपसर्ग सन्धि
     if (upa !== "") {
         let uBase = upa === "आङ्" ? "आ" : upa;
         steps.push(`उपसर्ग '${uBase}' का '${baseForm}' के साथ योग।`);
@@ -290,7 +282,6 @@ function toggleDark() {
 // 🔍 SEARCH EXAMPLES LOGIC (उदाहरण खोजें)
 // ==================================================
 
-// मॉडल खोलना और बंद करना
 function openSearchModal() {
     document.getElementById("searchModal").style.display = "block";
     document.getElementById("searchInput").focus();
@@ -302,7 +293,6 @@ function closeSearchModal() {
     document.getElementById("searchResults").innerHTML = "";
 }
 
-// अगर यूजर पॉपअप के बाहर क्लिक करे, तो भी बंद हो जाए
 window.addEventListener('click', function(event) {
     let modal = document.getElementById("searchModal");
     if (event.target == modal) {
@@ -310,11 +300,8 @@ window.addEventListener('click', function(event) {
     }
 });
 
-// किसी सूत्र का ID देकर उसकी पूरी जानकारी ढूँढने वाला फंक्शन
 function getSutraDetails(sutraId) {
-    // हमारे पास अलग-अलग पाद के एरे (Arrays) हैं, हम सबमें ढूँढेंगे
     const allArrays = ['samjnaSutras', 'pada_1_2', 'pada_1_3', 'pada_1_4', 'pada_3_1'];
-    
     for (let arrayName of allArrays) {
         if (sanskritDatabase[arrayName]) {
             let foundSutra = sanskritDatabase[arrayName].find(s => s.id === sutraId);
@@ -324,32 +311,38 @@ function getSutraDetails(sutraId) {
     return { name: "अज्ञात सूत्र", desc: "विवरण उपलब्ध नहीं" };
 }
 
-// असली सर्च फंक्शन (जो टाइप करते ही काम करेगा)
 function performSearch() {
     let query = document.getElementById("searchInput").value.trim();
     let resultsDiv = document.getElementById("searchResults");
     
-    // अगर सर्च बॉक्स खाली है
     if (query.length === 0) {
         resultsDiv.innerHTML = "";
         return;
     }
 
-    // JSON के "examples" एरे में ढूँढना
-    let matchedExamples = sanskritDatabase.examples.filter(item => item.ex.includes(query));
+    // अगर डेटाबेस में examples एरे नहीं है, तो एरर से बचने के लिए चेक
+    if (!sanskritDatabase.examples) {
+        resultsDiv.innerHTML = `<p style="color:red; text-align:center;">डेटाबेस लोड हो रहा है...</p>`;
+        return;
+    }
+
+    // सर्च को स्मार्ट बनाना (ताकि आधा शब्द भी ढूँढ ले)
+    let matchedExamples = sanskritDatabase.examples.filter(item => 
+        item.ex.includes(query) || item.sutra.includes(query)
+    );
 
     if (matchedExamples.length === 0) {
         resultsDiv.innerHTML = `<p style="color:red; text-align:center; margin-top:20px;">कोई परिणाम नहीं मिला।</p>`;
         return;
     }
 
-    // परिणाम दिखाना
     let htmlOutput = "";
     matchedExamples.forEach(match => {
-        let sutraInfo = getSutraDetails(match.sutra); // सूत्र की जानकारी निकाली
+        let sutraInfo = getSutraDetails(match.sutra);
         
-        // सर्च किए गए शब्द को हाईलाइट (Bold) करना
-        let highlightedEx = match.ex.replace(new RegExp(query, 'g'), `<span style="background-color:yellow; color:black;">${query}</span>`);
+        // सर्च वर्ड को पीला हाईलाइट करना
+        let regex = new RegExp(query, 'gi');
+        let highlightedEx = match.ex.replace(regex, `<span style="background-color:yellow; color:black; border-radius:2px; padding:0 2px;">${query}</span>`);
 
         htmlOutput += `
             <div class="result-card">
