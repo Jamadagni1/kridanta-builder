@@ -73,12 +73,11 @@ function applySandhi(word1, word2) {
 }
 
 // ==================================================
-// 2. डेटाबेस लोडिंग (Loading all 4 JSON files concurrently)
+// 2. डेटाबेस लोडिंग (Concurrent JSON loading)
 // ==================================================
 async function loadDatabase() {
     try {
         const timestamp = new Date().getTime();
-        
         const [dhatusRes, sutrasRes, examplesRes, pratyayasRes] = await Promise.all([
             fetch(`dhatus.json?v=${timestamp}`),
             fetch(`sutras.json?v=${timestamp}`),
@@ -87,7 +86,7 @@ async function loadDatabase() {
         ]);
 
         if (!dhatusRes.ok || !sutrasRes.ok || !examplesRes.ok || !pratyayasRes.ok) {
-            throw new Error("HTTP error! One of the JSON files is missing or broken.");
+            throw new Error("JSON files missing or broken.");
         }
 
         const dhatusData = await dhatusRes.json();
@@ -95,18 +94,13 @@ async function loadDatabase() {
         const examplesData = await examplesRes.json();
         const pratyayasData = await pratyayasRes.json();
 
-        sanskritDatabase = {
-            ...dhatusData,
-            ...sutrasData,
-            ...examplesData
-        };
-
+        sanskritDatabase = { ...dhatusData, ...sutrasData, ...examplesData };
         pratyayaDB = pratyayasData.pratyayaDB;
 
         initializeUI();
     } catch (error) { 
         console.error(error);
-        alert("डेटा लोड नहीं हो सका। कृपया अपनी JSON फ़ाइलों की जाँच करें।"); 
+        alert("डेटा लोड नहीं हो सका। कृपया JSON फ़ाइलों की जाँच करें।"); 
     }
 }
 
@@ -115,15 +109,13 @@ function initializeUI() {
     if (upaList && sanskritDatabase.upasargas) {
         sanskritDatabase.upasargas.forEach(u => { if(u.id !== "") upaList.insertAdjacentHTML('beforeend', `<option value="${u.id}">${u.label}</option>`); });
     }
-    
     let dhatuList = document.getElementById("dhatuList");
     if (dhatuList && sanskritDatabase.dhatus) {
         for (let key in sanskritDatabase.dhatus) { dhatuList.insertAdjacentHTML('beforeend', `<option value="${key}">${sanskritDatabase.dhatus[key].label}</option>`); }
     }
-    
     let pratList = document.getElementById("pratList");
     if (pratList && pratyayaDB) {
-        for (let key in pratyayaDB) { pratList.insertAdjacentHTML('beforeend', `<option value="${key}">${pratyayaDB[key].label || key}</option>`); }
+        for (let key in pratyayaDB) { pratList.insertAdjacentHTML('beforeend', `<option value="${key}">${key} (${pratyayaDB[key].real})</option>`); }
     }
 
     let dropdownContainer = document.getElementById("sutraDropdown");
@@ -172,7 +164,7 @@ function generateKridanta() {
     }
 
     let dhatuData = sanskritDatabase.dhatus ? sanskritDatabase.dhatus[dhatuStr] : null;
-    let activeDhatu = dhatuStr; // Default
+    let activeDhatu = dhatuStr;
 
     if (!dhatuData) {
         steps.push(`<i>(नोट: धातु कस्टम है, सिस्टम 'अलोऽन्त्यात् पूर्व उपधा' से काम कर रहा है)</i>`);
@@ -194,7 +186,6 @@ function generateKridanta() {
 
     let activePratyaya = pratData.real;
 
-    // गुण/वृद्धि लॉजिक
     if (pratData.type === "kit" || pratData.type === "ngit" || pratData.type === "git") {
         steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित्/ङित्/गित् है, अतः 'क्ङिति च (1.1.5)' से गुण/वृद्धि निषिद्ध।`);
     } else if (pratData.type === "nnit" || pratData.type === "nit") {
@@ -205,7 +196,6 @@ function generateKridanta() {
         steps.push(`<b>गुण:</b> 'सार्वधातुकार्धधातुकयोः' से धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
     }
 
-    // कुत्व विधान (चजोः कु घिण्ण्यतोः)
     if (pratData.kutva || pratData.type === "ghit") {
         if (activeDhatu.endsWith('च्') || activeDhatu.endsWith('ज्')) {
             activeDhatu = activeDhatu.replace(/च्$/, 'क्').replace(/ज्$/, 'ग्');
@@ -213,13 +203,11 @@ function generateKridanta() {
         }
     }
 
-    // टि-लोप (डित् प्रत्यय)
     if (pratData.type === "dit") {
-        activeDhatu = activeDhatu.replace(/[अाइईउऊऋएऐओऔ][क-ह]्?$/, ''); // सरल टि-लोप
+        activeDhatu = activeDhatu.replace(/[अाइईउऊऋएऐओऔ][क-ह]्?$/, ''); 
         steps.push(`<b>टि-लोप:</b> डित् प्रत्यय परे होने से 'टेः' (6.4.143) से अन्त्य भाग का लोप -> <b>${activeDhatu}</b>`);
     }
 
-    // ल्यप् में तुक् आगम
     if (pratStr === "ल्यप्") {
         let shortVowels = ["अ", "इ", "उ", "ऋ", "ि", "ु", "ृ"]; 
         if (shortVowels.includes(activeDhatu.slice(-1))) {
@@ -228,27 +216,22 @@ function generateKridanta() {
         }
     }
 
-    // अनुनासिक लोप
-    if ((activeDhatu.endsWith("म्") || activeDhatu.endsWith("न्")) && pratData.type === "kit") {
+    if ((activeDhatu.endsWith("म्") || activeDhatu.endsWith("न्")) && (pratData.type === "kit" || pratData.type === "ngit")) {
         activeDhatu = activeDhatu.slice(0, -1);
-        steps.push(`<b>अनुनासिक लोप:</b> कित् प्रत्यय परे 'गम्/हन्' आदि के म्/न् का लोप हुआ -> <b>${activeDhatu}</b>`);
+        steps.push(`<b>अनुनासिक लोप:</b> 'अनुदात्तोपदेश...' (6.4.37) से म्/न् का लोप हुआ -> <b>${activeDhatu}</b>`);
     }
 
-    // इट् आगम
+    // --- इट्-आगम सुधार (हसित्वा आदि के लिए) ---
     let isValadi = !['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ', 'य'].includes(activePratyaya.charAt(0));
     let itAgama = false;
-    if (pratData.type !== "kit" && pratStr !== "ल्यप्" && !pratData.type.includes("nit") && !pratData.type.includes("hit")) {
-        if (dhatuData.isSet && isValadi) {
-            itAgama = true;
-            steps.push(`<b>इट्-आगम:</b> धातु सेट् और प्रत्यय वलादि है, अतः 'इट् (इ)' का आगम हुआ।`);
-        }
+    if (dhatuData.isSet && isValadi && pratStr !== "ल्यप्") {
+        itAgama = true;
+        steps.push(`<b>इट्-आगम:</b> धातु 'सेट्' है और प्रत्यय वलादि है, अतः 'आर्धधातुकस्येड् वलादेः' (7.2.35) से 'इ' का आगम हुआ।`);
     }
 
-    // जोड़ना (Internal Sandhi)
     if (itAgama) baseForm = applySandhi(activeDhatu, "इ" + activePratyaya);
     else baseForm = applySandhi(activeDhatu, activePratyaya);
 
-    // म् + त -> न्त (अनुस्वार परसवर्ण)
     if (baseForm.includes("म्त") || baseForm.includes("म्त्व")) {
         baseForm = baseForm.replace("म्त", "न्त").replace("म्त्व", "न्त्व");
         steps.push(`<b>परसवर्ण:</b> 'अनुस्वारस्य ययि परसवर्णः' से 'म्' को 'न्' हुआ।`);
@@ -260,7 +243,6 @@ function generateKridanta() {
         baseForm = joinedForm;
     }
 
-    // सुप् विभक्ति (Gender processing)
     if (pratData.gender === "m") {
         baseForm = baseForm + "ः";
         steps.push(`<b>सुप्-विभक्ति:</b> पुँल्लिङ्ग प्रथमा एकवचन 'सु' का विसर्ग (ः) हुआ -> <b>${baseForm}</b>`);
@@ -278,7 +260,6 @@ function generateKridanta() {
         steps.push(`<b>सुप्-विभक्ति:</b> शतृ-अन्त 'अत्' को प्रथमा एकवचन में 'अन्' हुआ -> <b>${baseForm}</b>`);
     }
 
-    // उपसर्ग योग
     if (upa !== "") {
         let uBase = upa === "आङ्" ? "आ" : upa;
         steps.push(`<b>उपसर्ग योग:</b> '${uBase}' का '${baseForm}' के साथ योग।`);
@@ -299,7 +280,7 @@ function generateKridanta() {
     setTimeout(() => { document.getElementById("resultSection").scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
 }
 
-// UI Interactions
+// --- UI Interaction Helpers ---
 function togglePrakriya() { document.getElementById("prakriyaBox").classList.toggle("show"); }
 function toggleMobileMenu() {
     const nav = document.getElementById("nav-menu");
