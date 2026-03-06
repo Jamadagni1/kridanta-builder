@@ -194,7 +194,7 @@ function generateKridanta() {
 
     let activePratyaya = pratData.real;
 
-    // गुण/वृद्धि लॉजिक
+    // 1. गुण/वृद्धि लॉजिक
     if (pratData.type === "kit" || pratData.type === "ngit" || pratData.type === "git") {
         steps.push(`<b>गुण/वृद्धि निषेध:</b> प्रत्यय कित्/ङित्/गित् है, अतः 'क्ङिति च (1.1.5)' से गुण/वृद्धि निषिद्ध।`);
     } else if (pratData.type === "nnit" || pratData.type === "nit") {
@@ -205,7 +205,7 @@ function generateKridanta() {
         steps.push(`<b>गुण:</b> 'सार्वधातुकार्धधातुकयोः' से धातु को गुण हुआ -> <b>${activeDhatu}</b>`);
     }
 
-    // कुत्व विधान (चजोः कु घिण्ण्यतोः)
+    // 2. कुत्व विधान (चजोः कु घिण्ण्यतोः)
     if (pratData.kutva || pratData.type === "ghit") {
         if (activeDhatu.endsWith('च्') || activeDhatu.endsWith('ज्')) {
             activeDhatu = activeDhatu.replace(/च्$/, 'क्').replace(/ज्$/, 'ग्');
@@ -213,13 +213,13 @@ function generateKridanta() {
         }
     }
 
-    // टि-लोप (डित् प्रत्यय)
+    // 3. टि-लोप (डित् प्रत्यय)
     if (pratData.type === "dit") {
-        activeDhatu = activeDhatu.replace(/[अाइईउऊऋएऐओऔ][क-ह]्?$/, ''); // सरल टि-लोप
+        activeDhatu = activeDhatu.replace(/[अाइईउऊऋएऐओऔ][क-ह]्?$/, ''); 
         steps.push(`<b>टि-लोप:</b> डित् प्रत्यय परे होने से 'टेः' (6.4.143) से अन्त्य भाग का लोप -> <b>${activeDhatu}</b>`);
     }
 
-    // ल्यप् में तुक् आगम
+    // 4. ल्यप् में तुक् आगम
     if (pratStr === "ल्यप्") {
         let shortVowels = ["अ", "इ", "उ", "ऋ", "ि", "ु", "ृ"]; 
         if (shortVowels.includes(activeDhatu.slice(-1))) {
@@ -228,25 +228,28 @@ function generateKridanta() {
         }
     }
 
-    // अनुनासिक लोप
+    // 5. अनुनासिक लोप (गम् + क्त्वा = गत्वा)
     if ((activeDhatu.endsWith("म्") || activeDhatu.endsWith("न्")) && pratData.type === "kit") {
         activeDhatu = activeDhatu.slice(0, -1);
         steps.push(`<b>अनुनासिक लोप:</b> कित् प्रत्यय परे 'गम्/हन्' आदि के म्/न् का लोप हुआ -> <b>${activeDhatu}</b>`);
     }
 
-    // इट् आगम
+    // 6. इट् आगम (The Bug Fix is Here)
     let isValadi = !['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ', 'य'].includes(activePratyaya.charAt(0));
     let itAgama = false;
-    if (pratData.type !== "kit" && pratStr !== "ल्यप्" && !pratData.type.includes("nit") && !pratData.type.includes("hit")) {
-        if (dhatuData.isSet && isValadi) {
-            itAgama = true;
-            steps.push(`<b>इट्-आगम:</b> धातु सेट् और प्रत्यय वलादि है, अतः 'इट् (इ)' का आगम हुआ।`);
-        }
+    
+    // अगर धातु 'सेट्' है, प्रत्यय व्यंजन(य को छोड़कर) से शुरू है, और ल्यप् नहीं है, तो 'इ' जुड़ेगा।
+    if (dhatuData.isSet && isValadi && pratStr !== "ल्यप्") {
+        itAgama = true;
+        steps.push(`<b>इट्-आगम:</b> धातु 'सेट्' है और प्रत्यय वलादि है, अतः 'आर्धधातुकस्येड् वलादेः' से 'इ' का आगम हुआ।`);
     }
 
-    // जोड़ना (Internal Sandhi)
-    if (itAgama) baseForm = applySandhi(activeDhatu, "इ" + activePratyaya);
-    else baseForm = applySandhi(activeDhatu, activePratyaya);
+    // 7. जोड़ना (Internal Sandhi)
+    if (itAgama) {
+        baseForm = applySandhi(activeDhatu, "इ" + activePratyaya);
+    } else {
+        baseForm = applySandhi(activeDhatu, activePratyaya);
+    }
 
     // म् + त -> न्त (अनुस्वार परसवर्ण)
     if (baseForm.includes("म्त") || baseForm.includes("म्त्व")) {
@@ -260,7 +263,7 @@ function generateKridanta() {
         baseForm = joinedForm;
     }
 
-    // सुप् विभक्ति (Gender processing)
+    // 8. सुप् विभक्ति (Gender processing)
     if (pratData.gender === "m") {
         baseForm = baseForm + "ः";
         steps.push(`<b>सुप्-विभक्ति:</b> पुँल्लिङ्ग प्रथमा एकवचन 'सु' का विसर्ग (ः) हुआ -> <b>${baseForm}</b>`);
@@ -278,7 +281,7 @@ function generateKridanta() {
         steps.push(`<b>सुप्-विभक्ति:</b> शतृ-अन्त 'अत्' को प्रथमा एकवचन में 'अन्' हुआ -> <b>${baseForm}</b>`);
     }
 
-    // उपसर्ग योग
+    // 9. उपसर्ग योग
     if (upa !== "") {
         let uBase = upa === "आङ्" ? "आ" : upa;
         steps.push(`<b>उपसर्ग योग:</b> '${uBase}' का '${baseForm}' के साथ योग।`);
@@ -298,7 +301,6 @@ function generateKridanta() {
     document.getElementById("prakriyaBox").classList.remove("show");
     setTimeout(() => { document.getElementById("resultSection").scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
 }
-
 // UI Interactions
 function togglePrakriya() { document.getElementById("prakriyaBox").classList.toggle("show"); }
 function toggleMobileMenu() {
