@@ -23,15 +23,7 @@
     { "id": "दुर्", "label": "दुर् (dur)" },
     { "id": "प्रति", "label": "प्रति (prati)" }
   ],
-  "pratyayas": {
-    "तव्यत्": { "label": "तव्यत् (चाहिए)", "real": "तव्य", "type": "akit", "isValadi": true, "lopa": "अन्तिम 'त्' का लोप (हलन्त्यम्)" },
-    "अनीयर्": { "label": "अनीयर् (योग्य)", "real": "अनीय", "type": "akit", "isValadi": false, "lopa": "अन्तिम 'र्' का लोप" },
-    "ण्वुल्":  { "label": "ण्वुल् - अक (कर्ता)", "real": "अक", "type": "nnit", "isValadi": false, "lopa": "आदि 'ण्' और अन्तिम 'ल्' का लोप, 'वु' को 'अक' आदेश" },
-    "तृच्":   { "label": "तृच् - ता (कर्ता)", "real": "ता", "type": "akit", "isValadi": true, "lopa": "अन्तिम 'च्' का लोप, प्रथमा एकवचन में 'तॄ' का 'ता'" },
-    "क्त":    { "label": "क्त - त (भूतकाल)", "real": "त", "type": "kit", "isValadi": true, "lopa": "आदि 'क्' का लोप (लशक्वतद्धिते)" },
-    "क्त्वा":  { "label": "क्त्वा - त्वा (करके)", "real": "त्वा", "type": "kit", "isValadi": true, "lopa": "आदि 'क्' का लोप" },
-    "ल्यप्":   { "label": "ल्यप् - य (करके)", "real": "य", "type": "kit", "isValadi": false, "lopa": "आदि 'ल्' और अन्तिम 'प्' का लोप" }
-  },
+  
   "dhatus": {
     "भू": { "label": "भू (सत्तायाम् - होना | to exist, to become)", "clean": "भू", "anubandha": "none", "isSet": true, "guna": "भो", "vriddhi": "भौ" },
     "एध": { "label": "एध (वृद्धौ - बढना | to grow, to prosper)", "clean": "एध्", "anubandha": "अ", "isSet": true, "guna": "एध्", "vriddhi": "ऐध्" },
