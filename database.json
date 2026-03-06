@@ -135,7 +135,7 @@
     "त्रकि": { "label": "त्रकि (गतौ - जाना | to go)", "clean": "त्रङ्क्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "त्रङ्क्", "vriddhi": "त्राङ्क्" },
     "ढौकृ": { "label": "ढौकृ (गतौ - जाना | to go)", "clean": "ढौक्", "anubandha": "ऋ", "isSet": true, "guna": "ढौक्", "vriddhi": "ढौक्" },
     "त्रौकृ": { "label": "त्रौकृ (गतौ - जाना | to go)", "clean": "त्रौक्", "anubandha": "ऋ", "isSet": true, "guna": "त्रौक्", "vriddhi": "त्रौक्" },
-    "ष्वष्क": { "ष्वष्क": { "label": "ष्वष्क (गतौ - जाना | to go)", "clean": "स्वष्क्", "anubandha": "ष->स, अ", "isSet": true, "guna": "स्वष्क्", "vriddhi": "स्वाष्क्" },
+    "ष्वष्क":{ "label": "ष्वष्क (गतौ - जाना | to go)", "clean": "स्वष्क्", "anubandha": "ष->स, अ", "isSet": true, "guna": "स्वष्क्", "vriddhi": "स्वाष्क्" },
     "वस्क": { "label": "वस्क (गतौ - जाना | to go)", "clean": "वस्क्", "anubandha": "अ", "isSet": true, "guna": "वस्क्", "vriddhi": "वास्क्" },
     "मस्क": { "label": "मस्क (गतौ - जाना | to go)", "clean": "मस्क्", "anubandha": "अ", "isSet": true, "guna": "मस्क्", "vriddhi": "मास्क्" },
     "टिकृ": { "label": "टिकृ (गतौ - जाना | to go)", "clean": "टिक्", "anubandha": "ऋ", "isSet": true, "guna": "टेक्", "vriddhi": "टैक्" },
