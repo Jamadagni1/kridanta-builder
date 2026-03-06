@@ -135,7 +135,6 @@
     "त्रकि": { "label": "त्रकि (गतौ - जाना | to go)", "clean": "त्रङ्क्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "त्रङ्क्", "vriddhi": "त्राङ्क्" },
     "ढौकृ": { "label": "ढौकृ (गतौ - जाना | to go)", "clean": "ढौक्", "anubandha": "ऋ", "isSet": true, "guna": "ढौक्", "vriddhi": "ढौक्" },
     "त्रौकृ": { "label": "त्रौकृ (गतौ - जाना | to go)", "clean": "त्रौक्", "anubandha": "ऋ", "isSet": true, "guna": "त्रौक्", "vriddhi": "त्रौक्" },
-    
     "ष्वष्क": { "ष्वष्क": { "label": "ष्वष्क (गतौ - जाना | to go)", "clean": "स्वष्क्", "anubandha": "ष->स, अ", "isSet": true, "guna": "स्वष्क्", "vriddhi": "स्वाष्क्" },
     "वस्क": { "label": "वस्क (गतौ - जाना | to go)", "clean": "वस्क्", "anubandha": "अ", "isSet": true, "guna": "वस्क्", "vriddhi": "वास्क्" },
     "मस्क": { "label": "मस्क (गतौ - जाना | to go)", "clean": "मस्क्", "anubandha": "अ", "isSet": true, "guna": "मस्क्", "vriddhi": "मास्क्" },
@@ -231,8 +230,7 @@
     "मचि": { "label": "मचि (धारणोच्छ्रायपूजनेषु - धारण करना | to wear, to hold, to raise, to get respect)", "clean": "मञ्च्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "मञ्च्", "vriddhi": "माञ्च्" },
     "पचि": { "label": "पचि (व्यक्तीकरणे - स्पष्ट करना | to articulate, to speak clearly)", "clean": "पञ्च्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "पञ्च्", "vriddhi": "पाञ्च्" },
     "ष्टुच": { "label": "ष्टुच (प्रसादे - प्रसन्न होना | to be pleased, to be happy)", "clean": "स्तुच्", "anubandha": "ष्टु->स्तु, अ", "isSet": true, "guna": "स्तोच्", "vriddhi": "स्तौच्" },
-    "ऋज": { "label": "ऋज (गतिस्थानार्ज... - जाना/कमाना | to go, to stand, to gain, to earn)", "clean": "ऋज्", "anubandha": "अ", "isSet": true, "guna": "अर्ज्", "vriddhi": "आर्ज्" },
-      
+    "ऋज": { "label": "ऋज (गतिस्थानार्ज... - जाना/कमाना | to go, to stand, to gain, to earn)", "clean": "ऋज्", "anubandha": "अ", "isSet": true, "guna": "अर्ज्", "vriddhi": "आर्ज्" },  
     "ऋजि": { "label": "ऋजि (भर्जने - भूनना | to fry, to parch)", "clean": "ऋञ्ज्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "अर्ञ्ज्", "vriddhi": "आर्ञ्ज्" },
     "भृजी": { "label": "भृजी (भर्जने - भूनना | to fry, to parch)", "clean": "भृञ्ज्", "anubandha": "ई (नुम्)", "isSet": true, "guna": "भर्ञ्ज्", "vriddhi": "भार्ञ्ज्" },
     "एजृ": { "label": "एजृ (दीप्तौ - प्रकाशित होना | to glow, to shine)", "clean": "एज्", "anubandha": "ऋ", "isSet": true, "guna": "एज्", "vriddhi": "ऐज्" },
@@ -332,8 +330,7 @@
     "कठि": { "label": "कठि (शोके - दुःख करना | to sorrow, to grieve)", "clean": "कण्ठ्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "कण्ठ्", "vriddhi": "काण्ठ्" },
     "मुठि": { "label": "मुठि (पालने - पालन करना | to protect)", "clean": "मुण्ठ्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "मुण्ठ्", "vriddhi": "मौण्ठ्" },
     "हेठ": { "label": "हेठ (विबाधायाम् - क्रूर होना | to hinder, to be cruel)", "clean": "हेठ्", "anubandha": "अ", "isSet": true, "guna": "हेठ्", "vriddhi": "हैठ्" },
-    "एठ": { "label": "एठ (विबाधायाम् - रोकना | to hinder, to be cruel)", "clean": "एठ्", "anubandha": "अ", "isSet": true, "guna": "एठ्", "vriddhi": "ऐठ्" },
-      
+    "एठ": { "label": "एठ (विबाधायाम् - रोकना | to hinder, to be cruel)", "clean": "एठ्", "anubandha": "अ", "isSet": true, "guna": "एठ्", "vriddhi": "ऐठ्" },  
     "हिडि": { "label": "हिडि (गत्यनादरयोः - घूमना/अनादर करना | to roam, to disrespect)", "clean": "हिण्ड्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "हिण्ड्", "vriddhi": "हैण्ड्" },
     "हुडि": { "label": "हुडि (सङ्घाते - एकत्र करना | to accept, to agree)", "clean": "हुण्ड्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "हुण्ड्", "vriddhi": "हौण्ड्" },
     "कुडि": { "label": "कुडि (दाहे - जलना | to burn, to mutilate)", "clean": "कुण्ड्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "कुण्ड्", "vriddhi": "कौण्ड्" },
@@ -433,8 +430,7 @@
     "कुठि२": { "label": "कुठि (प्रतिघाते - रोकना | to stop, to hinder)", "clean": "कुण्ठ्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "कुण्ठ्", "vriddhi": "कौण्ठ्" },
     "लुठि२": { "label": "लुठि (आलस्ये प्रतिघाते च - आलस्य करना/रोकना | to be lazy, to resist)", "clean": "लुण्ठ्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "लुण्ठ्", "vriddhi": "लौण्ठ्" },
     "शुठि": { "label": "शुठि (शोषणे - सूखना/सुखाना | to dry, to become dry)", "clean": "शुण्ठ्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "शुण्ठ्", "vriddhi": "शौण्ठ्" },
-    "रुठि२": { "label": "रुठि (गतौ - जाना | to go)", "clean": "रुण्ठ्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "रुण्ठ्", "vriddhi": "रौण्ठ्" },
-      
+    "रुठि२": { "label": "रुठि (गतौ - जाना | to go)", "clean": "रुण्ठ्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "रुण्ठ्", "vriddhi": "रौण्ठ्" }, 
     "लुठि३": { "label": "लुठि (गतौ - जाना | to go)", "clean": "लुण्ठ्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "लुण्ठ्", "vriddhi": "लौण्ठ्" },
     "चुड्ड": { "label": "चुड्ड (भावकरणे - इशारा करना | to indicate, to hint)", "clean": "चुड्ड्", "anubandha": "अ", "isSet": true, "guna": "चोड्ड्", "vriddhi": "चौड्ड्" },
     "अड्ड": { "label": "अड्ड (अभियोगे - प्रार्थना/अपराध | to join, to pray, to do a crime)", "clean": "अड्ड्", "anubandha": "अ", "isSet": true, "guna": "अड्ड्", "vriddhi": "आड्ड्" },
