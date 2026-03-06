@@ -79,7 +79,6 @@ async function loadDatabase() {
     try {
         const timestamp = new Date().getTime();
         
-        // अब 4 फ़ाइलें एक साथ लोड होंगी
         const [dhatusRes, sutrasRes, examplesRes, pratyayasRes] = await Promise.all([
             fetch(`dhatus.json?v=${timestamp}`),
             fetch(`sutras.json?v=${timestamp}`),
@@ -96,14 +95,12 @@ async function loadDatabase() {
         const examplesData = await examplesRes.json();
         const pratyayasData = await pratyayasRes.json();
 
-        // डेटाबेस को मिलाएँ
         sanskritDatabase = {
             ...dhatusData,
             ...sutrasData,
             ...examplesData
         };
 
-        // प्रत्यय डेटाबेस को सेट करें
         pratyayaDB = pratyayasData.pratyayaDB;
 
         initializeUI();
@@ -118,13 +115,15 @@ function initializeUI() {
     if (upaList && sanskritDatabase.upasargas) {
         sanskritDatabase.upasargas.forEach(u => { if(u.id !== "") upaList.insertAdjacentHTML('beforeend', `<option value="${u.id}">${u.label}</option>`); });
     }
+    
     let dhatuList = document.getElementById("dhatuList");
     if (dhatuList && sanskritDatabase.dhatus) {
         for (let key in sanskritDatabase.dhatus) { dhatuList.insertAdjacentHTML('beforeend', `<option value="${key}">${sanskritDatabase.dhatus[key].label}</option>`); }
     }
+    
     let pratList = document.getElementById("pratList");
     if (pratList && pratyayaDB) {
-        for (let key in pratyayaDB) { pratList.insertAdjacentHTML('beforeend', `<option value="${key}">${pratyayaDB[key].label}</option>`); }
+        for (let key in pratyayaDB) { pratList.insertAdjacentHTML('beforeend', `<option value="${key}">${pratyayaDB[key].label || key}</option>`); }
     }
 
     let dropdownContainer = document.getElementById("sutraDropdown");
