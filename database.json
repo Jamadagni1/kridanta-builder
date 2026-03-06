@@ -47,7 +47,7 @@
     "भदि": { "label": "भदि (कल्याणे सुखे च - सुखी होना | to be glad, to be prosperous)", "clean": "भन्द्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "भन्द्", "vriddhi": "भान्द्" },
     "मदि": { "label": "मदि (स्तुतिमोद... - आनन्द करना | to praise, to rejoice)", "clean": "मन्द्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "मन्द्", "vriddhi": "मान्द्" },
     "स्पदि": { "label": "स्पदि (किञ्चिच्चलने - काँपना | to vibrate, to tremble)", "clean": "स्पन्द्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "स्पन्द्", "vriddhi": "स्पान्द्" },
-    "क्लिदि": { "label": "क्लिदि (परिदेवने - रोना/शोक करना | to lament, to grieve)", "clean": "क्लिन्द्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "क्लिन्द्", "vriddhi": "क्लैन्द्" },
+    "क्लिदि": { "label": "क्लिदि (परिदेवने - रोना/शोक करना | to lament, to grieve)", "clean": "क्लिन्द्", "anubandha": "इ (नुम्)", "isSet": true, "guna": "क्लिन्द्", "vriddhi": "क्लैन्द्" }
   },
   "sutras": [
     { "name": "✨ आर्धधातुकस्येड् वलादेः", "desc": "सेट् धातुओं से वलादि प्रत्यय परे होने पर 'इट् (इ)' का आगम होता है।" },
